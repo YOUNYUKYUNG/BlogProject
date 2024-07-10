@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>login</title>
+</head>
+<body>
+<h7><a th:href="@{/}">블로그</a></h7>
+<h2>로그인</h2>
+<form action="/login" method="post">
+    <label for="username">아이디 : </label>
+    <input type="text" id="username" name="username" required><br><br>
+
+    <label for="password">비밀 번호 : </label>
+    <input type="text" id="password" name="password" required><br><br>
+
+    <a th:href="@{/}">로그인</a>
+
+    <a th:href="@{/userregform}">회원가입</a>
+    <br></br>
+    <a th:href="@{/oauth2/authorization/github}" class="btn btn-primary">Login with GitHub</a>
+</form>
+</body>
+</html>

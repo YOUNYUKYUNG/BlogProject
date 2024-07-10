@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>임시저장</title>
+</head>
+<body>
+<h1>임시 글 목록</h1>
+<div th:each="draft : ${drafts}">
+    <h2><a th:href="@{/blog/draft/{id}(id=${draft.draftId})}" th:text="${draft.title}">제목</a></h2>
+    <p th:text="${draft.content}">내용</p>
+</body>
+</html>

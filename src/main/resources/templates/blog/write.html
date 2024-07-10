@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>새 블로그 글 작성</title>
+</head>
+<body>
+<h1>새 블로그 글 작성</h1>
+<form th:action="@{/blog/save}" th:object="${post}" method="post">
+    <label for="title">제목:</label>
+    <input type="text" id="title" th:field="*{title}" required/><br/>
+
+    <label for="content">내용:</label>
+    <textarea id="content" th:field="*{content}" required></textarea><br/>
+
+
+</form>
+</body>
+</html>
