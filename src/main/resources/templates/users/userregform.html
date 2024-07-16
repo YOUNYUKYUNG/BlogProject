@@ -1,48 +1,28 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>회원가입</title>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('username').addEventListener('blur', function() {
-                var username = this.value;
-                if (username) {
-                    fetch('/api/check-username?username=' + username)
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.available) {
-                                document.getElementById('username-message').textContent = '사용 가능한 아이디입니다.';
-                            } else {
-                                document.getElementById('username-message').textContent = '이미 사용 중인 아이디입니다.';
-                            }
-                        });
-                }
-            });
+        function checkUsername() {
+            const username = document.getElementById('username').value;
+            fetch(`/api/check-username?username=${username}`)
+                .then(response => response.json())
+                .then(data => {
+                    const message = data.available ? '사용 가능한 아이디입니다.' : '이미 사용 중인 아이디입니다.';
+                    document.getElementById('username-message').innerText = message;
+                });
+        }
 
-            document.getElementById('email').addEventListener('blur', function() {
-                var email = this.value;
-                if (email) {
-                    fetch('/api/check-email?email=' + email)
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.available) {
-                                document.getElementById('email-message').textContent = '사용 가능한 이메일입니다.';
-                            } else {
-                                document.getElementById('email-message').textContent = '이미 사용 중인 이메일입니다.';
-                            }
-                        });
-                }
-            });
-
-            document.getElementById('userForm').addEventListener('submit', function(e) {
-                if (!document.getElementById('username-message').textContent.includes('사용 가능한') ||
-                    !document.getElementById('email-message').textContent.includes('사용 가능한')) {
-                    e.preventDefault();
-                    alert('아이디와 이메일을 확인해주세요.');
-                }
-            });
-        });
+        function checkEmail() {
+            const email = document.getElementById('email').value;
+            fetch(`/api/check-email?email=${email}`)
+                .then(response => response.json())
+                .then(data => {
+                    const message = data.available ? '사용 가능한 이메일입니다.' : '이미 사용 중인 이메일입니다.';
+                    document.getElementById('email-message').innerText = message;
+                });
+        }
     </script>
 </head>
 <body>
@@ -52,7 +32,7 @@
     <form id="userForm" th:action="@{/userreg}" method="post" th:object="${user}">
         <div>
             <label for="username">아이디</label>
-            <input type="text" id="username" th:field="*{username}" required>
+            <input type="text" id="username" th:field="*{username}" onblur="checkUsername()" required>
             <span id="username-message"></span>
         </div>
         <div>
@@ -69,7 +49,7 @@
         </div>
         <div>
             <label for="email">이메일</label>
-            <input type="email" id="email" th:field="*{email}" required>
+            <input type="email" id="email" th:field="*{email}" onblur="checkEmail()" required>
             <span id="email-message"></span>
         </div>
         <button type="submit">회원가입</button>

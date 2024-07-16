@@ -1,0 +1,173 @@
+/* General reset */
+body, h1, h2, h3, h4, h5, h6, p, div, span, a {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #fff;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Basic styling for the header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: white;
+    border-bottom: 2px solid black;
+}
+
+header .left-menu,
+header .right-menu {
+    display: flex;
+    align-items: center;
+}
+
+header .left-menu a,
+header .right-menu a {
+    text-decoration: none;
+    color: black;
+    margin-right: 15px;
+    font-size: 14px;
+}
+
+header .left-menu a:hover,
+header .right-menu a:hover {
+    color: red;
+}
+
+/* Logo styling */
+header .logo {
+    font-size: 40px;
+    font-weight: bold;
+    color: #FF0000;
+    text-shadow: 2px 2px 5px rgba(255, 0, 0, 0.5);
+}
+
+/* Subscribe and Login buttons */
+header .button {
+    display: inline-block;
+    padding: 6px 12px;
+    margin-right: 10px;
+    border-radius: 5px; /* Rounded corners */
+    font-size: 14px;
+    text-decoration: none;
+    font-weight: bold;
+    text-align: center;
+}
+
+header .button.subscribe {
+    background-color: #FF0000;
+    color: white;
+    border: none;
+}
+
+header .button.login {
+    background-color: white;
+    color: black;
+    border: 1px solid black;
+}
+
+header .button.subscribe:hover,
+header .button.login:hover {
+    background-color: #000;
+    color: white;
+}
+
+/* Newsletter and Search icons */
+.right-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 20px;
+    margin-top: 10px;
+}
+
+.right-menu .auth-buttons {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+header .newsletter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+header .newsletter img {
+    width: 30px;
+    height: 30px;
+    margin-top: 5px;
+}
+
+header .newsletter span {
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Additional lines separators */
+.line-separator {
+    height: 1px;
+    background-color: black;
+    width: 100%;
+    margin: 10px 0;
+}
+
+/* Navigation menu */
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 0 20px;
+}
+
+nav .nav-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+}
+
+nav .nav-links a {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: black;
+    font-size: 14px;
+    font-weight: bold;
+    margin: 0 15px;
+}
+
+nav .nav-links a:hover {
+    background-color: black;
+    color: white;
+}
+
+/* Search icon */
+nav .search {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+}
+
+nav .search img {
+    width: 20px;  /* Adjusted size */
+    height: 20px; /* Adjusted size */
+}

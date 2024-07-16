@@ -2,20 +2,53 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>home</title>
+    <link rel="stylesheet" th:href="@{/css/home.css}">
 </head>
 <body>
-    <div sec:authorize="isAuthenticated()">
-        <p>안녕하세요. <span sec:authentication="name"></span>님^^ </p>
-        <a href="/info">내 정보보기</a><br>
-        <a href="/logout">로그아웃</a>
+<div class="container">
+    <header>
+        <div class="left-menu">
+            <a th:href="@{/}">GOT A TIP?</a>
+        </div>
+        <div class="logo">yourlog</div>
+        <div class="right-menu">
+            <div class="auth-buttons">
+                <div sec:authorize="isAuthenticated()">
+                    <a th:href="@{/logout}" class="button subscribe">LOG OUT</a>
+                    <a th:href="@{/}" class="button login">LOG IN</a>
+                </div>
+                <div sec:authorize="isAnonymous()">
+                    <a th:href="@{/loginform}" class="button login">LOG IN</a>
+                </div>
+            </div>
+            <div class="newsletter">
+                <a th:href="@{/blog/write}">
+                    <img src="/image/newpost-icon.JPG" alt="New Post Icon">
+                </a>
+            </div>
+        </div>
+    </header>
 
-        <a href="/write">새 글 작성</a><br>
+    <div class="line-separator"></div>
 
-    </div>
+    <nav>
+        <div class="nav-links">
+            <a th:href="@{/}">HOME</a>
+            <a th:href="@{/}">LIKE</a>
+            <a th:href="@{/}">TAG</a>
+            <a th:href="@{/}">SERIES</a>
+            <a th:href="@{/}">CHAT</a>
+        </div>
+        <div class="search">
+            <a th:href ="@{/}">
+                <img src="/image/search-icon.JPG" alt="Search Icon">
+            </a>
+        </div>
+    </nav>
 
-    <div sec:authorize="isAnonymous()">
-        <a href="/loginform">로그인</a>
-    </div>
+    <div class="line-separator"></div>
+</div>
 </body>
 </html>
