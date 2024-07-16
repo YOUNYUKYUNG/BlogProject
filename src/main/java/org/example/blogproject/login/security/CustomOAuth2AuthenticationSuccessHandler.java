@@ -29,16 +29,13 @@ public class CustomOAuth2AuthenticationSuccessHandler implements AuthenticationS
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        String requestUri = request.getRequestURI();
-        String provider = extractProviderFromUri(requestUri);
+        String provider = extractProviderFromUri(request.getRequestURI());
         if (provider == null) {
             response.sendRedirect("/");
             return;
         }
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        DefaultOAuth2User defaultOAuth2User = (DefaultOAuth2User) auth.getPrincipal();
-
+        DefaultOAuth2User defaultOAuth2User = (DefaultOAuth2User) authentication.getPrincipal();
         int socialId = (int) defaultOAuth2User.getAttributes().get("id");
         String name = (String) defaultOAuth2User.getAttributes().get("name");
 
@@ -46,11 +43,9 @@ public class CustomOAuth2AuthenticationSuccessHandler implements AuthenticationS
         Optional<User> userOptional = userService.findByProviderAndSocialId(provider, String.valueOf(socialId));
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-
             CustomUserDetails customUserDetails = new CustomUserDetails(
                     user.getUsername(),
                     user.getPassword(),
-                    user.getName(),
                     user.getRoles().stream().map(Role::getName).collect(Collectors.toList())
             );
 
@@ -65,15 +60,9 @@ public class CustomOAuth2AuthenticationSuccessHandler implements AuthenticationS
     }
 
     private String extractProviderFromUri(String uri) {
-        if (uri == null || uri.isBlank()) {
-            return null;
+        if (uri != null && uri.startsWith("/login/oauth2/code/")) {
+            return uri.split("/")[uri.split("/").length - 1];
         }
-
-        if (!uri.startsWith("/login/oauth2/code/")) {
-            return null;
-        }
-
-        String[] segments = uri.split("/");
-        return segments[segments.length - 1];
+        return null;
     }
 }

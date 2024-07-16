@@ -12,6 +12,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
+
 @Controller
 @RequiredArgsConstructor
 public class UserController {
@@ -25,7 +27,7 @@ public class UserController {
     }
 
     @PostMapping("/userreg")
-    public String userreg(@ModelAttribute("userDto") UserDto userDto, BindingResult result, Model model) {
+    public String userreg(@ModelAttribute("userDto") @Valid UserDto userDto, BindingResult result, Model model) {
         if (result.hasErrors()) {
             return "users/userregform";
         }
@@ -64,7 +66,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String login(@ModelAttribute("loginRequest") LoginRequestDto loginRequest, BindingResult result, Model model) {
+    public String login(@ModelAttribute("loginRequest") @Valid LoginRequestDto loginRequest, BindingResult result, Model model) {
         if (result.hasErrors()) {
             return "users/loginform";
         }
@@ -77,7 +79,6 @@ public class UserController {
             return "users/loginform";
         }
 
-        // 로그인 성공 시 응답 Dto 설정
         LoginResponseDto loginResponse = new LoginResponseDto(
                 user.getId(),
                 user.getUsername(),
@@ -89,8 +90,8 @@ public class UserController {
         return "users/welcome";
     }
 
-    @GetMapping("/info")
+    @GetMapping("/myProfile")
     public String info() {
-        return "users/info";
+        return "myProfile";
     }
 }

@@ -42,7 +42,7 @@ public class SecurityConfig {
                 .formLogin(form -> form
                         .loginPage("/loginform")
                         .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/", true)
+                        .defaultSuccessUrl("/welcome", true)
                         .failureUrl("/loginform?error=true")
                 )
                 .cors(cors -> cors.configurationSource(configurationSource()))
