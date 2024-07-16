@@ -9,23 +9,37 @@
 <div class="container">
     <h1>환영합니다!</h1>
     <p>기본 회원 정보를 등록해주세요.</p>
-    <form th:action="@{/saveSocialUser}" method="post">
-        <label for="name">이름</label>
-        <input type="text" id="name" name="name" th:value="${name}"> <br>
+    <form th:action="@{/saveSocialUser}" method="post" th:object="${userDto}">
+        <div>
+            <label for="name">이름</label>
+            <input type="text" id="name" th:field="*{name}" required>
+            <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color: red;"></div>
+        </div>
+        <br>
 
-        <label for="username">사용자 ID</label>
-        <input type="text" id="username" name="username"> <br>
+        <div>
+            <label for="username">사용자 ID</label>
+            <input type="text" id="username" th:field="*{username}" required>
+            <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}" style="color: red;"></div>
+        </div>
+        <br>
 
-        <label for="email">email</label>
-        <input type="text" id="email" name="email">  <br>
+        <div>
+            <label for="email">email</label>
+            <input type="text" id="email" th:field="*{email}" required>
+            <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red;"></div>
+        </div>
+        <br>
 
         <input type="hidden" name="socialId" th:value="${socialId}">
         <input type="hidden" name="provider" th:value="${provider}">
         <input type="hidden" name="uuid" th:value="${uuid}">
+
         <div>
             <input type="checkbox" id="terms" name="terms" required>
             <label for="terms">이용약관과 개인정보취급방침에 동의합니다.</label>
         </div>
+        <br>
 
         <div class="buttons">
             <button type="button" onclick="window.location.href='/'">취소</button>

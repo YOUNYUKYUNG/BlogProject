@@ -6,22 +6,65 @@
     <script>
         function checkUsername() {
             const username = document.getElementById('username').value;
-            fetch(`/api/check-username?username=${username}`)
-                .then(response => response.json())
+            const url = `/api/check-username?username=${username}`;
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    return response.json();
+                })
                 .then(data => {
-                    const message = data.available ? '사용 가능한 아이디입니다.' : '이미 사용 중인 아이디입니다.';
-                    document.getElementById('username-message').innerText = message;
+                    const usernameMessage = document.getElementById('username-message');
+                    if (data.available) {
+                        usernameMessage.textContent = '사용 가능한 아이디입니다.';
+                        usernameMessage.style.color = 'green';
+                    } else {
+                        usernameMessage.textContent = '이미 사용 중인 아이디입니다.';
+                        usernameMessage.style.color = 'red';
+                    }
+                })
+                .catch(error => {
+                    console.error('There has been a problem with your fetch operation:', error);
                 });
         }
 
         function checkEmail() {
             const email = document.getElementById('email').value;
-            fetch(`/api/check-email?email=${email}`)
-                .then(response => response.json())
+            const url = `/api/check-email?email=${email}`;
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    return response.json();
+                })
                 .then(data => {
-                    const message = data.available ? '사용 가능한 이메일입니다.' : '이미 사용 중인 이메일입니다.';
-                    document.getElementById('email-message').innerText = message;
+                    const emailMessage = document.getElementById('email-message');
+                    if (data.available) {
+                        emailMessage.textContent = '사용 가능한 이메일입니다.';
+                        emailMessage.style.color = 'green';
+                    } else {
+                        emailMessage.textContent = '이미 사용 중인 이메일입니다.';
+                        emailMessage.style.color = 'red';
+                    }
+                })
+                .catch(error => {
+                    console.error('There has been a problem with your fetch operation:', error);
                 });
+        }
+
+        function checkPasswordMatch() {
+            const password = document.getElementById('password').value;
+            const passwordConfirm = document.getElementById('passwordConfirm').value;
+            const passwordMessage = document.getElementById('password-message');
+
+            if (password !== passwordConfirm) {
+                passwordMessage.textContent = '비밀번호가 일치하지 않습니다. 다시 입력하세요.';
+                passwordMessage.style.color = 'red';
+            } else {
+                passwordMessage.textContent = '';
+            }
         }
     </script>
 </head>
@@ -29,29 +72,39 @@
 <div>
     <h5><a th:href="@{/}">블로그</a></h5>
     <h2>회원가입</h2>
-    <form id="userForm" th:action="@{/userreg}" method="post" th:object="${user}">
+    <form id="userForm" th:action="@{/userreg}" method="post" th:object="${userDto}">
         <div>
             <label for="username">아이디</label>
-            <input type="text" id="username" th:field="*{username}" onblur="checkUsername()" required>
-            <span id="username-message"></span>
+            <input type="text" id="username" th:field="*{username}">
+            <button type="button" onclick="checkUsername()">중복 확인</button>
         </div>
+        <div id="username-message" style="color: red;"></div>
+        <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}" style="color: red;"></div> <!-- 에러 메시지 표시 -->
+
         <div>
             <label for="password">비밀번호</label>
-            <input type="password" id="password" th:field="*{password}" required>
+            <input type="password" id="password" th:field="*{password}" oninput="checkPasswordMatch()">
         </div>
+
         <div>
             <label for="passwordConfirm">비밀번호 확인</label>
-            <input type="password" id="passwordConfirm" th:field="*{passwordConfirm}" required>
+            <input type="password" id="passwordConfirm" th:field="*{passwordConfirm}" oninput="checkPasswordMatch()">
         </div>
+        <div id="password-message" style="color: red;"></div>
+
         <div>
             <label for="name">이름</label>
-            <input type="text" id="name" th:field="*{name}" required>
+            <input type="text" id="name" th:field="*{name}">
         </div>
+
         <div>
             <label for="email">이메일</label>
-            <input type="email" id="email" th:field="*{email}" onblur="checkEmail()" required>
-            <span id="email-message"></span>
+            <input type="email" id="email" th:field="*{email}">
+            <button type="button" onclick="checkEmail()">중복 확인</button>
         </div>
+        <div id="email-message" style="color: red;"></div>
+        <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red;"></div> <!-- 에러 메시지 표시 -->
+
         <button type="submit">회원가입</button>
     </form>
 </div>

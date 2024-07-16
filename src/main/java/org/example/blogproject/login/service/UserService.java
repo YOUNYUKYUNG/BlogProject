@@ -3,6 +3,7 @@ package org.example.blogproject.login.service;
 import lombok.RequiredArgsConstructor;
 import org.example.blogproject.login.domain.Role;
 import org.example.blogproject.login.domain.User;
+import org.example.blogproject.login.dto.UserDto;
 import org.example.blogproject.login.repository.RoleRepository;
 import org.example.blogproject.login.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,10 +21,15 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public User registUser(User user) {
+    public User registUser(UserDto userDto) {
+        User user = new User();
+        user.setUsername(userDto.getUsername());
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        user.setName(userDto.getName());
+        user.setEmail(userDto.getEmail());
+
         Role userRole = roleRepository.findByName("USER");
         user.setRoles(Collections.singleton(userRole));
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         return userRepository.save(user);
     }

@@ -35,13 +35,14 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/userregform", "/userreg", "/", "/loginform", "/css/**", "/js/**", "/image/**").permitAll()
                         .requestMatchers("/oauth2/**", "/login/oauth2/code/github", "/registerSocialUser", "/saveSocialUser").permitAll()
+                        .requestMatchers("/api/**").permitAll() // API 경로 접근 허용
                         .anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf.disable())
                 .formLogin(form -> form
                         .loginPage("/loginform")
                         .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/", true)  // 로그인 성공 시 홈으로 이동
+                        .defaultSuccessUrl("/", true)
                         .failureUrl("/loginform?error=true")
                 )
                 .cors(cors -> cors.configurationSource(configurationSource()))
