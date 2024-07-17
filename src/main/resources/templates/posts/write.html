@@ -46,7 +46,7 @@
 <body>
 <div class="editor-container">
     <form id="postForm" method="post">
-        <input type="text" class="title-input" placeholder="제목을 입력하세요" name="title" th:value="${post != null ? post.title : ''}">
+        <input type="text" class="title-input" placeholder="제목을 입력하세요" name="title" id="post-title" th:value="${post != null ? post.title : ''}">
         <input type="text" id="tags" class="tags-input" placeholder="태그를 입력하세요" name="tags" th:value="${post != null ? post.tags : ''}">
 
         <div class="ckeditor-container">
@@ -70,9 +70,8 @@
 
         <div class="buttons">
             <button type="button" onclick="goBack()">뒤로가기</button>
-            <button type="button" onclick="showPublishModal()">출간하기</button>
+            <button type="button" onclick="showPreview()">출간하기</button>
         </div>
-    </form>
 </div>
 
 <script>
@@ -80,7 +79,7 @@
         window.history.back();
     }
 
-    function showPublishModal() {
+    function showPreview() {
         const form = document.getElementById('postForm');
         const formData = new FormData(form);
         const tags = JSON.parse(formData.get('tags')).map(tag => tag.value);
@@ -91,7 +90,7 @@
             content: formData.get('content')
         };
 
-        fetch('/posts/save', {
+        fetch('/post/preview', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -100,7 +99,11 @@
         })
             .then(response => response.json())
             .then(data => {
-                window.location.href = '/posts/' + data.postId;
+                if (data.postId) {
+                    window.location.href = '/post/preview?postId=' + data.postId + '&title=' + encodeURIComponent(postData.title);
+                } else {
+                    console.error('Error: postId is undefined');
+                }
             })
             .catch(error => console.error('Error:', error));
     }

@@ -10,6 +10,8 @@ import org.example.blogproject.post.tag.Tag;
 import org.example.blogproject.post.tag.TagService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,15 +23,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Controller
-
 @RequiredArgsConstructor
 public class PostController {
 
     private final PostService postService;
     private final UserService userService;
     private final TagService tagService;
-
-    // 기존 매핑 메서드들...
 
     @GetMapping("/")
     public String home(Model model) {
@@ -42,7 +41,7 @@ public class PostController {
     public String viewPost(Model model, @RequestParam Long id) {
         Post post = postService.findPostById(id).orElseThrow(() -> new IllegalArgumentException("Post not found"));
         model.addAttribute("post", post);
-        return "view";  // 포스트 보기 페이지를 보여주는 템플릿 이름
+        return "posts/view";  // 포스트 보기 페이지를 보여주는 템플릿 이름
     }
 
     @GetMapping("/write")
@@ -53,6 +52,7 @@ public class PostController {
         model.addAttribute("postDto", new PostDto());
         return "posts/write";
     }
+
     @PostMapping("/posts/save")
     @ResponseBody
     public ResponseEntity<Map<String, Long>> savePost(@RequestBody PostDto postDto, Authentication authentication) {
@@ -67,9 +67,8 @@ public class PostController {
         post.setPublished(postDto.isPublished());
         post.setPrivate(postDto.isPrivate());
 
-        // 태그 처리
         Set<Tag> tags = postDto.getTags().stream().map(tagName -> {
-            Tag tag = tagService.findOrCreateTag(tagName); // 태그를 찾거나 새로 생성하는 서비스 메서드
+            Tag tag = tagService.findOrCreateTag(tagName);
             return tag;
         }).collect(Collectors.toSet());
         post.setTags(tags);
@@ -81,10 +80,29 @@ public class PostController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/posts/{postId}")
-    public String viewPost(@PathVariable Long postId, Model model) {
-        Post post = postService.findPostById(postId).orElseThrow(() -> new IllegalArgumentException("Post not found"));
-        model.addAttribute("post", post);
-        return "posts/view";
+    @PostMapping("/post/preview")
+    @ResponseBody
+    public ResponseEntity<Map<String, Long>> previewPost(@RequestBody PostDto postDto, @AuthenticationPrincipal UserDetails userDetails) {
+        User user = userService.findByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        Post post = new Post();
+        post.setTitle(postDto.getTitle());
+        post.setContent(postDto.getContent());
+        post.setPreviewImageUrl(postDto.getPreviewImageUrl()); // 썸네일 이미지 URL 설정
+        post.setUser(user);  // 현재 로그인한 사용자 설정
+
+        Post savedPost = postService.savePost(post);
+
+        Map<String, Long> response = new HashMap<>();
+        response.put("postId", savedPost.getPostId());
+        return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/post/preview")
+    public String getPostPreview(@RequestParam("postId") Long postId, Model model) {
+        Post post = postService.findPostById(postId).orElseThrow(() -> new IllegalArgumentException("포스트를 찾을 수 없습니다."));
+        model.addAttribute("post", post);
+        return "posts/preview";
+    }
+
 }

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Post Preview</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 70%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+        .left-section, .right-section {
+            width: 48%;
+        }
+        .thumbnail-upload {
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .thumbnail-upload img {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 10px;
+            display: none; /* Initially hide the image */
+        }
+        .thumbnail-upload input[type="file"] {
+            display: none; /* Hide the file input */
+        }
+        .thumbnail-upload button {
+            background-color: #FF0000;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .thumbnail-upload button:hover {
+            background-color: #FF0000;
+        }
+        .description {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .right-section .setting-group {
+            margin-bottom: 20px;
+        }
+        .right-section label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .right-section input[type="text"], .right-section button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .right-section button {
+            background-color: #FF0000;
+            color: white;
+            cursor: pointer;
+        }
+        .right-section button:hover {
+            background-color: #FF0000;
+        }
+        .right-section .publish-buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+        .right-section .publish-buttons button {
+            width: 48%;
+        }
+        .visibility-buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+        .visibility-buttons button {
+            width: 48%;
+            background-color: white;
+            color: #FF0000;
+            padding: 10px;
+            border: 2px solid #FF0000;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .visibility-buttons button:hover {
+            background-color: #FF0000;
+            color: white;
+        }
+    </style>
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+
+        function publishPost() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const postId = urlParams.get('postId');
+            window.location.href = '/posts/view?id=' + postId;
+        }
+
+        function previewThumbnail(event) {
+            const reader = new FileReader();
+            reader.onload = function () {
+                const output = document.getElementById('thumbnail-preview');
+                output.src = reader.result;
+                output.style.display = 'block';
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            // write.html에서 전달된 제목을 가져와서 표시
+            const urlParams = new URLSearchParams(window.location.search);
+            const title = urlParams.get('title');
+            if (title) {
+                const titleElement = document.getElementById('postTitle');
+                titleElement.innerText = title;
+            }
+        });
+    </script>
+</head>
+<body>
+<div class="container">
+    <div class="left-section">
+        <div class="thumbnail-upload">
+            <img id="thumbnail-preview" src="https://via.placeholder.com/100" alt="Thumbnail Preview">
+            <input type="file" id="thumbnail-input" name="thumbnail" accept="image/*" onchange="previewThumbnail(event)">
+            <button onclick="document.getElementById('thumbnail-input').click()">썸네일 업로드</button>
+        </div>
+
+        <!-- write.html에서 전달된 제목을 여기서 표시 -->
+        <h2 id="postTitle"></h2>
+
+        <textarea class="description" placeholder="당신의 포스트를 짧게 소개해보세요." maxlength="150"></textarea>
+    </div>
+    <div class="right-section">
+        <div class="setting-group">
+            <label>공개 설정</label>
+            <div class="visibility-buttons">
+                <button>전체 공개</button>
+                <button>비공개</button>
+            </div>
+        </div>
+        <div class="setting-group">
+            <label>URL 설정</label>
+            <input type="text" value="/@/">
+        </div>
+        <div class="setting-group">
+            <label>시리즈 설정</label>
+            <input type="text" placeholder="시리즈에 추가하기">
+        </div>
+
+        <div class="publish-buttons">
+            <button onclick="goBack()">취소</button>
+            <button onclick="publishPost()">출간하기</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>
