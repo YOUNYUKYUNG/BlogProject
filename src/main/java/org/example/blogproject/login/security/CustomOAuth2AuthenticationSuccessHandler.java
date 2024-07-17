@@ -46,6 +46,7 @@ public class CustomOAuth2AuthenticationSuccessHandler implements AuthenticationS
             CustomUserDetails customUserDetails = new CustomUserDetails(
                     user.getUsername(),
                     user.getPassword(),
+                    user.getName(),  // 추가된 부분
                     user.getRoles().stream().map(Role::getName).collect(Collectors.toList())
             );
 

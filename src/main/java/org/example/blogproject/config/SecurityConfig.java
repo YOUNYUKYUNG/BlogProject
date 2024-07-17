@@ -2,7 +2,9 @@ package org.example.blogproject.config;
 
 import lombok.RequiredArgsConstructor;
 import org.example.blogproject.login.security.CustomOAuth2AuthenticationSuccessHandler;
+import org.example.blogproject.login.service.SocialLoginInfoService;
 import org.example.blogproject.login.service.SocialUserService;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,8 +28,8 @@ import java.util.List;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final CustomOAuth2AuthenticationSuccessHandler customOAuth2AuthenticationSuccessHandler;
     private final SocialUserService socialUserService;
+    private final ApplicationContext applicationContext;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -49,12 +51,18 @@ public class SecurityConfig {
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/loginform")
+                        .defaultSuccessUrl("/welcome", true)
                         .failureUrl("/loginFailure")
                         .userInfoEndpoint(userInfo -> userInfo.userService(this.oauth2UserService()))
-                        .successHandler(customOAuth2AuthenticationSuccessHandler)
+                        .successHandler(customOAuth2AuthenticationSuccessHandler())
                 );
 
         return http.build();
+    }
+
+    @Bean
+    public CustomOAuth2AuthenticationSuccessHandler customOAuth2AuthenticationSuccessHandler() {
+        return new CustomOAuth2AuthenticationSuccessHandler(applicationContext.getBean(SocialLoginInfoService.class), applicationContext);
     }
 
     @Bean

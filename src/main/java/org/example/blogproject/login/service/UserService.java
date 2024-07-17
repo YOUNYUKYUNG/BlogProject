@@ -34,6 +34,18 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    @Transactional(readOnly = false)
+    public User saveUser(String username, String name, String email, String socialId, String provider) {
+        User user = new User();
+        user.setUsername(username);
+        user.setName(name);
+        user.setEmail(email);
+        user.setSocialId(socialId);
+        user.setProvider(provider);
+        user.setPassword(""); // 비밀번호는 소셜 로그인 사용자의 경우 비워둡니다.
+        return userRepository.save(user);
+    }
+
     @Transactional(readOnly = true)
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
@@ -52,17 +64,5 @@ public class UserService {
     @Transactional(readOnly = true)
     public Optional<User> findByProviderAndSocialId(String provider, String socialId) {
         return userRepository.findByProviderAndSocialId(provider, socialId);
-    }
-
-    @Transactional
-    public User saveUser(String username, String name, String email, String socialId, String provider, PasswordEncoder passwordEncoder) {
-        User user = new User();
-        user.setUsername(username);
-        user.setName(name);
-        user.setEmail(email);
-        user.setSocialId(socialId);
-        user.setProvider(provider);
-        user.setPassword(passwordEncoder.encode("")); // 비밀번호는 소셜 로그인 사용자의 경우 비워둡니다.
-        return userRepository.save(user);
     }
 }

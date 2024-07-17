@@ -1,12 +1,9 @@
 package org.example.blogproject.post.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.example.blogproject.login.domain.User;
-import org.example.blogproject.login.service.UserService;
-import org.example.blogproject.post.domain.PostDraft;
-import org.example.blogproject.post.service.PostDraftService;
-import org.example.blogproject.post.service.PostService;
+import org.example.blogproject.login.security.CustomUserDetails;
 import org.example.blogproject.post.domain.Post;
+import org.example.blogproject.post.service.PostService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -15,19 +12,36 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
 public class PostController {
     private final PostService postService;
-    private final PostDraftService postDraftService;
-    private final UserService userService;
 
     @GetMapping("/blog/write")
     public String createBlogForm(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        String username = customUserDetails.getUsername(); // 로그인한 사용자의 ID 가져오기
+        model.addAttribute("username", username);
+
         model.addAttribute("post", new Post());
         return "blog/write";
+    }
+
+    @GetMapping("/blog/publish")
+    public String showPublishForm(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        String username = customUserDetails.getUsername(); // 로그인한 사용자의 ID 가져오기
+        model.addAttribute("username", username);
+
+        model.addAttribute("postTitle", "");
+        model.addAttribute("postContent", "");
+
+        return "blog/publish";
     }
 
     @PostMapping("/blog/save")
@@ -44,70 +58,31 @@ public class PostController {
         return "redirect:/";
     }
 
-    @PostMapping("/blog/draft")
-    public String saveDraft(@ModelAttribute("post") Post post, BindingResult result) {
-        if (result.hasErrors()) {
-            return "blog/write";
+    @PostMapping("/blog/publish")
+    @ResponseBody
+    public Map<String, Object> publishPost(@RequestBody Map<String, String> request) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+
+            Post post = new Post();
+            post.setTitle(request.get("title"));
+            post.setContent(request.get("content"));
+            post.setPublished(true);
+            post.setPublishedAt(LocalDateTime.now());
+            // set other necessary fields
+
+            postService.save(post);
+
+            response.put("success", true);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("error", e.getMessage());
         }
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
-
-        PostDraft draft = new PostDraft();
-        draft.setUser(user);
-        draft.setTitle(post.getTitle());
-        draft.setContent(post.getContent());
-        draft.setPreviewImageUrl(post.getPreviewImageUrl());
-        draft.setCreatedAt(LocalDateTime.now());
-
-        postDraftService.save(draft);
-        return "redirect:/";
-    }
-
-    @GetMapping("/blog/drafts")
-    public String viewDrafts(Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
-        List<PostDraft> drafts = postDraftService.findByUser(user);
-        model.addAttribute("drafts", drafts);
-        return "blog/drafts";
-    }
-
-    @GetMapping("/blog/draft/{id}")
-    public String editDraft(@PathVariable Long id, Model model) {
-        PostDraft draft = postDraftService.findById(id);
-        model.addAttribute("post", draft);
-        return "blog/edit";
-    }
-
-    @PostMapping("/blog/draft/update")
-    public String updateDraft(@ModelAttribute("post") PostDraft draft, BindingResult result) {
-        if (result.hasErrors()) {
-            return "blog/edit";
-        }
-
-        draft.setUpdatedAt(LocalDateTime.now());
-        postDraftService.save(draft);
-        return "redirect:/";
-    }
-
-    @PostMapping("/blog/draft/publish")
-    public String publishDraft(@ModelAttribute("post") PostDraft draft, BindingResult result) {
-        if (result.hasErrors()) {
-            return "blog/edit";
-        }
-
-        Post post = new Post();
-        post.setUser(draft.getUser());
-        post.setTitle(draft.getTitle());
-        post.setContent(draft.getContent());
-        post.setPreviewImageUrl(draft.getPreviewImageUrl());
-        post.setPublished(true);
-        post.setPublishedAt(LocalDateTime.now());
-
-        postService.save(post);
-        postDraftService.deleteById(draft.getDraftId());
-        return "redirect:/";
+        return response;
     }
 
     @GetMapping("/blog/{id}")

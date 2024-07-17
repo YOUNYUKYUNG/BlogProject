@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Velog 스타일 작성 페이지</title>
+    <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css">
+    <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        .editor-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .title-input {
+            width: 100%;
+            padding: 10px;
+            font-size: 28px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            border: none;
+            border-bottom: 2px solid #ddd;
+        }
+        .tags-input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            border: none;
+            border-bottom: 2px solid #ddd;
+        }
+        .ckeditor-container {
+            margin-bottom: 20px;
+        }
+        .buttons button {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="editor-container">
+    <form id="postForm" method="post">
+        <input type="text" class="title-input" placeholder="제목을 입력하세요" name="title" th:value="${post.title}">
+        <input type="text" id="tags" class="tags-input" placeholder="태그를 입력하세요" name="tags" th:value="${post.tags}">
+
+        <div class="ckeditor-container">
+            <textarea id="editor" name="content" th:text="${post.content}"></textarea>
+        </div>
+
+        <script>
+            ClassicEditor
+                .create(document.querySelector('#editor'), {
+                    placeholder: '당신의 이야기를 적어보세요...'
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+
+            var input = document.querySelector('input[id=tags]');
+            new Tagify(input, {
+                delimiters: ",|\\n", // 쉼표나 엔터로 태그 구분
+            });
+        </script>
+
+        <div class="buttons">
+            <button type="button" onclick="goBack()">뒤로가기</button>
+            <button type="button" onclick="showPublishModal()">출간하기</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    function goBack() {
+        window.history.back();
+    }
+
+    function showPublishModal() {
+        const form = document.getElementById('postForm');
+        const formData = new FormData(form);
+
+        localStorage.setItem('postTitle', formData.get('title'));
+        localStorage.setItem('postTags', formData.get('tags'));
+        localStorage.setItem('postContent', formData.get('content'));
+
+        window.location.href = '/blog/publish';
+    }
+</script>
+</body>
+</html>

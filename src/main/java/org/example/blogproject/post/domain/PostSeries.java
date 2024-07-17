@@ -1,4 +1,4 @@
-package org.example.blogproject.post.service;
+package org.example.blogproject.post.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;

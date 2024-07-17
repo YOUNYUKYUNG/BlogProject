@@ -35,4 +35,7 @@ public class UserDto {
 
     @NotBlank(message = "비밀번호 확인을 입력해주세요")
     private String passwordConfirm;
+
+    private String provider;
+    private String socialId;
 }

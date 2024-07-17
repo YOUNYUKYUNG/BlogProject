@@ -1,10 +1,12 @@
 package org.example.blogproject.login.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.example.blogproject.login.domain.SocialLoginInfo;
 import org.example.blogproject.login.domain.User;
 import org.example.blogproject.login.dto.LoginRequestDto;
 import org.example.blogproject.login.dto.LoginResponseDto;
 import org.example.blogproject.login.dto.UserDto;
+import org.example.blogproject.login.service.SocialLoginInfoService;
 import org.example.blogproject.login.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -14,10 +16,15 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Optional;
+
 @Controller
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final SocialLoginInfoService socialLoginInfoService;
     private final PasswordEncoder passwordEncoder;
 
     @GetMapping("/userregform")
@@ -39,15 +46,15 @@ public class UserController {
             result.rejectValue("email", null, "이미 사용중인 이메일입니다.");
             return "users/userregform";
         }
+        if (userDto.getPassword() == null || userDto.getPassword().isEmpty()) {
+            result.rejectValue("password", null, "비밀번호를 입력해주세요.");
+            return "users/userregform";
+        }
 
         userService.registUser(userDto);
-        return "redirect:/userregsuccess";
+        return "redirect:/welcome";
     }
 
-    @GetMapping("/userregsuccess")
-    public String userregsuccess() {
-        return "users/userregsuccess";
-    }
 
     @GetMapping("/")
     public String home() {
@@ -87,11 +94,53 @@ public class UserController {
         );
         model.addAttribute("user", loginResponse);
 
-        return "users/welcome";
+        return "redirect:/welcome";
     }
 
+    @GetMapping("/registerSocialUser")
+    public String showRegisterSocialUserForm(@RequestParam("provider") String provider,
+                                             @RequestParam("socialId") String socialId,
+                                             @RequestParam("name") String name,
+                                             @RequestParam("uuid") String uuid,
+                                             Model model) {
+        model.addAttribute("provider", provider);
+        model.addAttribute("socialId", socialId);
+        model.addAttribute("name", name);
+        model.addAttribute("uuid", uuid);
+        return "users/registerSocialUser";
+    }
+
+    @PostMapping("/saveSocialUser")
+    public String saveSocialUser(@RequestParam("provider") String provider,
+                                 @RequestParam("socialId") String socialId,
+                                 @RequestParam("name") String name,
+                                 @RequestParam("username") String username,
+                                 @RequestParam("email") String email,
+                                 @RequestParam("uuid") String uuid,
+                                 Model model) {
+        Optional<SocialLoginInfo> socialLoginInfoOptional = socialLoginInfoService.findByProviderAndUuidAndSocialId(provider, uuid, socialId);
+
+        if (socialLoginInfoOptional.isPresent()) {
+            SocialLoginInfo socialLoginInfo = socialLoginInfoOptional.get();
+            LocalDateTime now = LocalDateTime.now();
+            Duration duration = Duration.between(socialLoginInfo.getCreatedAt(), now);
+
+            if (duration.toMinutes() > 20) {
+                return "redirect:/error"; // 20분 이상 경과한 경우 에러 페이지로 리다이렉트
+            }
+
+            // 유효한 경우 User 정보를 저장합니다.
+            userService.saveUser(username, name, email, socialId, provider);
+
+            return "redirect:/welcome";
+        } else {
+            return "redirect:/error"; // 해당 정보가 없는 경우 에러 페이지로 리다이렉트
+        }
+    }
+
+
     @GetMapping("/myProfile")
-    public String info() {
+    public String myProfile() {
         return "myProfile";
     }
 }

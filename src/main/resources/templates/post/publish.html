@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>출간 설정</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .publish-container {
+            display: flex;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            padding: 20px;
+            width: 800px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .preview, .settings {
+            flex: 1;
+            padding: 10px;
+        }
+        .preview-image {
+            width: 100%;
+            height: 200px;
+            background-color: #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        .input-group {
+            margin-bottom: 10px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .input-group input, .input-group textarea, .input-group select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+        .thumbnail-upload {
+            display: none;
+        }
+        .visibility-options {
+            display: flex;
+            gap: 10px;
+        }
+        .visibility-options input {
+            display: none;
+        }
+        .visibility-options label {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .visibility-options input:checked + label {
+            border-color: #007bff;
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<div class="publish-container">
+    <div class="preview">
+        <div class="preview-image" id="previewImage" onclick="document.getElementById('thumbnailUpload').click()">
+            <span>썸네일 업로드</span>
+            <input type="file" id="thumbnailUpload" class="thumbnail-upload" accept="image/*" onchange="loadThumbnail(event)">
+        </div>
+        <div class="input-group">
+            <label for="postTitle">제목</label>
+            <textarea id="postTitle" rows="2" th:text="${postTitle}"></textarea>
+        </div>
+        <div class="input-group">
+            <label for="postContent">내용</label>
+            <textarea id="postContent" rows="10" th:text="${postContent}"></textarea>
+        </div>
+    </div>
+    <div class="settings">
+        <div class="input-group">
+            <label>공개 설정</label>
+            <div class="visibility-options">
+                <input type="radio" id="public" name="visibility" value="public" checked>
+                <label for="public">전체 공개</label>
+                <input type="radio" id="private" name="visibility" value="private">
+                <label for="private">비공개</label>
+            </div>
+        </div>
+        <div class="input-group">
+            <label for="urlSetting">URL 설정</label>
+            <input type="text" id="urlSetting" placeholder="/@youryou/" th:value="${urlSetting}">
+        </div>
+        <div class="input-group">
+            <label for="seriesSetting">시리즈 설정</label>
+            <input type="text" id="seriesSetting" placeholder="시리즈에 추가하기" th:value="${seriesSetting}">
+        </div>
+        <div class="buttons">
+            <button type="button" onclick="cancelPublish()">취소</button>
+            <button type="button" onclick="publishPost()">출간하기</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function cancelPublish() {
+        window.location.href = '/blog/write';
+    }
+
+    function publishPost() {
+        const postTitle = document.getElementById('postTitle').value;
+        const postContent = document.getElementById('postContent').value;
+        const visibility = document.querySelector('input[name="visibility"]:checked').value;
+        const urlSetting = document.getElementById('urlSetting').value;
+        const seriesSetting = document.getElementById('seriesSetting').value;
+
+        const data = {
+            title: postTitle,
+            content: postContent,
+            visibility: visibility,
+            urlSetting: urlSetting,
+            seriesSetting: seriesSetting
+        };
+
+        fetch('/blog/publish', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('게시물이 출간되었습니다.');
+                    window.location.href = '/';
+                } else {
+                    alert('출간에 실패했습니다.');
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('출간에 실패했습니다.');
+            });
+    }
+
+    function loadThumbnail(event) {
+        const reader = new FileReader();
+        reader.onload = function(){
+            const output = document.getElementById('previewImage');
+            output.innerHTML = '<img src="' + reader.result + '" alt="썸네일">';
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+</script>
+</body>
+</html>

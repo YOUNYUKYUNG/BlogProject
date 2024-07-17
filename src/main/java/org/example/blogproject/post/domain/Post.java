@@ -3,7 +3,6 @@ package org.example.blogproject.post.domain;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.example.blogproject.post.service.PostSeries;
 import org.example.blogproject.tag.Tag;
 import org.example.blogproject.login.domain.User;
 
