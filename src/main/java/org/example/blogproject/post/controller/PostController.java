@@ -1,114 +1,90 @@
 package org.example.blogproject.post.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.example.blogproject.login.security.CustomUserDetails;
+import org.example.blogproject.login.domain.User;
+import org.example.blogproject.login.service.UserService;
 import org.example.blogproject.post.domain.Post;
+import org.example.blogproject.post.dto.PostDto;
 import org.example.blogproject.post.service.PostService;
+import org.example.blogproject.post.tag.Tag;
+import org.example.blogproject.post.tag.TagService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
+
 @RequiredArgsConstructor
 public class PostController {
+
     private final PostService postService;
+    private final UserService userService;
+    private final TagService tagService;
 
-    @GetMapping("/blog/write")
-    public String createBlogForm(Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        String username = customUserDetails.getUsername(); // 로그인한 사용자의 ID 가져오기
-        model.addAttribute("username", username);
+    // 기존 매핑 메서드들...
 
-        model.addAttribute("post", new Post());
-        return "blog/write";
+    @GetMapping("/")
+    public String home(Model model) {
+        List<Post> posts = postService.findAllPosts();
+        model.addAttribute("posts", posts);
+        return "home";
     }
 
-    @GetMapping("/blog/publish")
-    public String showPublishForm(Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        String username = customUserDetails.getUsername(); // 로그인한 사용자의 ID 가져오기
-        model.addAttribute("username", username);
-
-        model.addAttribute("postTitle", "");
-        model.addAttribute("postContent", "");
-
-        return "blog/publish";
+    @GetMapping("/posts/view")
+    public String viewPost(Model model, @RequestParam Long id) {
+        Post post = postService.findPostById(id).orElseThrow(() -> new IllegalArgumentException("Post not found"));
+        model.addAttribute("post", post);
+        return "view";  // 포스트 보기 페이지를 보여주는 템플릿 이름
     }
 
-    @PostMapping("/blog/save")
-    public String saveBlogPost(@ModelAttribute("post") Post post, BindingResult result) {
-        if (result.hasErrors()) {
-            return "blog/write";
-        }
-
-        if (post.isPublished()) {
-            post.setPublishedAt(LocalDateTime.now());
-        }
-
-        postService.save(post);
-        return "redirect:/";
+    @GetMapping("/write")
+    public String postForm(Model model, Authentication authentication) {
+        String username = authentication.getName();
+        User user = userService.findByUsername(username).orElseThrow(() -> new IllegalArgumentException("Invalid user"));
+        model.addAttribute("username", user.getUsername());
+        model.addAttribute("postDto", new PostDto());
+        return "posts/write";
     }
-
-    @PostMapping("/blog/publish")
+    @PostMapping("/posts/save")
     @ResponseBody
-    public Map<String, Object> publishPost(@RequestBody Map<String, String> request) {
-        Map<String, Object> response = new HashMap<>();
+    public ResponseEntity<Map<String, Long>> savePost(@RequestBody PostDto postDto, Authentication authentication) {
+        String username = authentication.getName();
+        User user = userService.findByUsername(username).orElseThrow(() -> new IllegalArgumentException("Invalid user"));
 
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        Post post = new Post();
+        post.setUser(user);
+        post.setTitle(postDto.getTitle());
+        post.setContent(postDto.getContent());
+        post.setPreviewImageUrl(postDto.getPreviewImageUrl());
+        post.setPublished(postDto.isPublished());
+        post.setPrivate(postDto.isPrivate());
 
-            Post post = new Post();
-            post.setTitle(request.get("title"));
-            post.setContent(request.get("content"));
-            post.setPublished(true);
-            post.setPublishedAt(LocalDateTime.now());
-            // set other necessary fields
+        // 태그 처리
+        Set<Tag> tags = postDto.getTags().stream().map(tagName -> {
+            Tag tag = tagService.findOrCreateTag(tagName); // 태그를 찾거나 새로 생성하는 서비스 메서드
+            return tag;
+        }).collect(Collectors.toSet());
+        post.setTags(tags);
 
-            postService.save(post);
+        Post savedPost = postService.savePost(post);
 
-            response.put("success", true);
-        } catch (Exception e) {
-            response.put("success", false);
-            response.put("error", e.getMessage());
-        }
-
-        return response;
+        Map<String, Long> response = new HashMap<>();
+        response.put("postId", savedPost.getPostId());
+        return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/blog/{id}")
-    public String viewBlogPost(@PathVariable Long id, Model model) {
-        postService.findById(id).ifPresent(post -> model.addAttribute("post", post));
-        return "blog/view";
-    }
-
-    @GetMapping("/blog/edit/{id}")
-    public String editBlogPost(@PathVariable Long id, Model model) {
-        postService.findById(id).ifPresent(post -> model.addAttribute("post", post));
-        return "blog/edit";
-    }
-
-    @PostMapping("/blog/update")
-    public String updateBlogPost(@ModelAttribute("post") Post post, BindingResult result) {
-        if (result.hasErrors()) {
-            return "blog/edit";
-        }
-
-        post.setUpdatedAt(LocalDateTime.now());
-        if (post.isPublished()) {
-            post.setPublishedAt(LocalDateTime.now());
-        }
-
-        postService.save(post);
-        return "redirect:/";
+    @GetMapping("/posts/{postId}")
+    public String viewPost(@PathVariable Long postId, Model model) {
+        Post post = postService.findPostById(postId).orElseThrow(() -> new IllegalArgumentException("Post not found"));
+        model.addAttribute("post", post);
+        return "posts/view";
     }
 }

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>포스트 보기</title>
+</head>
+<body>
+<div class="post-container">
+    <h1 th:text="${post.title}">제목</h1>
+    <div th:text="${post.content}">내용</div>
+    <div class="tags">
+        <span th:each="tag : ${post.tags}" th:text="${tag.name}">태그</span>
+    </div>
+</div>
+</body>
+</html>

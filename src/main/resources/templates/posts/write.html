@@ -46,11 +46,11 @@
 <body>
 <div class="editor-container">
     <form id="postForm" method="post">
-        <input type="text" class="title-input" placeholder="제목을 입력하세요" name="title" th:value="${post.title}">
-        <input type="text" id="tags" class="tags-input" placeholder="태그를 입력하세요" name="tags" th:value="${post.tags}">
+        <input type="text" class="title-input" placeholder="제목을 입력하세요" name="title" th:value="${post != null ? post.title : ''}">
+        <input type="text" id="tags" class="tags-input" placeholder="태그를 입력하세요" name="tags" th:value="${post != null ? post.tags : ''}">
 
         <div class="ckeditor-container">
-            <textarea id="editor" name="content" th:text="${post.content}"></textarea>
+            <textarea id="editor" name="content" th:text="${post != null ? post.content : ''}"></textarea>
         </div>
 
         <script>
@@ -83,12 +83,26 @@
     function showPublishModal() {
         const form = document.getElementById('postForm');
         const formData = new FormData(form);
+        const tags = JSON.parse(formData.get('tags')).map(tag => tag.value);
 
-        localStorage.setItem('postTitle', formData.get('title'));
-        localStorage.setItem('postTags', formData.get('tags'));
-        localStorage.setItem('postContent', formData.get('content'));
+        const postData = {
+            title: formData.get('title'),
+            tags: tags,
+            content: formData.get('content')
+        };
 
-        window.location.href = '/blog/publish';
+        fetch('/posts/save', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(postData)
+        })
+            .then(response => response.json())
+            .then(data => {
+                window.location.href = '/posts/' + data.postId;
+            })
+            .catch(error => console.error('Error:', error));
     }
 </script>
 </body>

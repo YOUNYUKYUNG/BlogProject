@@ -56,11 +56,10 @@ public class UserController {
     }
 
 
-    @GetMapping("/")
-    public String home() {
-        return "home";
+    @GetMapping("/home")
+    public String home(Model model) {
+        return "home";  // 유저 홈 페이지를 보여주는 템플릿 이름
     }
-
     @GetMapping("/welcome")
     public String welcome() {
         return "users/welcome";

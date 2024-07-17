@@ -49,6 +49,19 @@
     </nav>
 
     <div class="line-separator"></div>
+
+    <div class="home-container">
+        <h1>모든 포스트</h1>
+        <div th:each="post : ${posts}">
+            <h2><a th:href="@{/posts/{postId}(postId=${post.postId})}" th:text="${post.title}">포스트 제목</a></h2>
+            <p th:text="${post.content}">포스트 내용</p>
+            <div class="tags">
+                <span th:each="tag : ${post.tags}" th:text="${tag}">태그</span>
+            </div>
+        </div>
+    </div>
+
+
 </div>
 </body>
 </html>

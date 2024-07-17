@@ -6,7 +6,7 @@
 </head>
 <body>
 <h1>블로그 글 수정</h1>
-<form th:action="@{/templates/post/draft/update}" th:object="${post}" method="post">
+<form th:action="@{/templates/posts/draft/update}" th:object="${post}" method="post">
     <input type="hidden" th:field="*{draftId}"/>
     <label for="title">제목:</label>
     <input type="text" id="title" th:field="*{title}" required/><br/>
