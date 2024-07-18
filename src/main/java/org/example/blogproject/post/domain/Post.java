@@ -52,6 +52,7 @@ public class Post {
     @Column(nullable = false)
     private long likesCount;
 
+    @Column(nullable = false)
     private boolean isDraft;
 
     @ManyToMany

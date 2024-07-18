@@ -1,111 +1,130 @@
+/* 기본 스타일 */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f5f5f5;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
+    font-family: Arial, sans-serif; /* 글꼴 설정: Arial, 없을 경우 sans-serif */
+    background-color: #f5f5f5; /* 배경색: 연한 회색 */
+    display: flex; /* 가로/세로 중앙 정렬을 위한 flexbox 사용 */
+    justify-content: center; /* 가로 중앙 정렬 */
+    align-items: center; /* 세로 중앙 정렬 */
+    height: 100vh; /* 높이: 화면 높이의 100% */
+    margin: 0; /* 바깥 여백 제거 */
 }
+
+/* 컨테이너 스타일 */
 .container {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    width: 70%;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    background-color: #fff; /* 배경색: 흰색 */
+    padding: 20px; /* 안쪽 여백: 20px */
+    border-radius: 10px; /* 모서리 둥글게: 10px */
+    box-shadow: 0 0 10px rgba(0,0,0,0.1); /* 그림자 효과 */
+    width: 70%; /* 너비: 화면 너비의 70% */
+    display: flex; /* 내부 요소들을 가로로 배치 */
+    flex-direction: row; /* 가로 방향 배치 */
+    justify-content: space-between; /* 요소들 사이 간격 최대화 */
 }
+
+/* 왼쪽/오른쪽 영역 스타일 */
 .left-section, .right-section {
-    width: 48%;
+    width: 48%; /* 너비: 각각 48% (총 96% + 간격 4%) */
 }
+
+/* 썸네일 업로드 영역 스타일 */
 .thumbnail-upload {
-    border: 2px dashed #ccc;
-    border-radius: 10px;
-    padding: 20px;
-    text-align: center;
-    margin-bottom: 20px;
+    border: 2px dashed #ccc; /* 테두리: 점선, 연한 회색 */
+    border-radius: 10px; /* 모서리 둥글게: 10px */
+    padding: 20px; /* 안쪽 여백: 20px */
+    text-align: center; /* 텍스트 가운데 정렬 */
+    margin-bottom: 20px; /* 아래쪽 여백: 20px */
 }
 .thumbnail-upload img {
-    width: 100px;
-    height: 100px;
-    margin-bottom: 10px;
-    display: none; /* Initially hide the image */
+    width: 100px; /* 너비: 100px */
+    height: 100px; /* 높이: 100px */
+    margin-bottom: 10px; /* 아래쪽 여백: 10px */
+    display: none; /* 이미지는 처음에 숨김 */
 }
 .thumbnail-upload input[type="file"] {
-    display: none; /* Hide the file input */
+    display: none; /* 파일 입력 숨김 */
 }
 .thumbnail-upload button {
-    background-color: #FF0000;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+    background-color: #FF0000; /* 배경색: 빨강 */
+    color: white; /* 글자색: 흰색 */
+    padding: 10px 20px; /* 안쪽 여백: 위아래 10px, 좌우 20px */
+    border: none; /* 테두리 없음 */
+    border-radius: 5px; /* 모서리 둥글게: 5px */
+    cursor: pointer; /* 마우스 커서를 손가락 모양으로 변경 */
 }
 .thumbnail-upload button:hover {
     background-color: #FF0000;
 }
+
+/* 설명 영역 스타일 */
 .description {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 10px;
-    width: 100%;
-    margin-bottom: 10px;
+    border: 1px solid #ccc; /* 테두리: 실선, 연한 회색 */
+    border-radius: 5px; /* 모서리 둥글게: 5px */
+    padding: 10px; /* 안쪽 여백: 10px */
+    width: 100%; /* 너비: 100% */
+    margin-bottom: 10px; /* 아래쪽 여백: 10px */
 }
+
+/* 오른쪽 영역 설정 그룹 스타일 */
 .right-section .setting-group {
-    margin-bottom: 20px;
+    margin-bottom: 20px; /* 아래쪽 여백: 20px */
 }
 .right-section label {
-    display: block;
-    margin-bottom: 10px;
-    font-weight: bold;
+    display: block; /* 레이블을 블록 요소로 설정하여 줄바꿈 */
+    margin-bottom: 10px; /* 아래쪽 여백: 10px */
+    font-weight: bold; /* 글자 굵게 */
 }
+
+/* 오른쪽 영역 입력 필드 및 버튼 스타일 */
 .right-section input[type="text"], .right-section button {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    width: 100%; /* 너비: 100% */
+    padding: 10px; /* 안쪽 여백: 10px */
+    margin-bottom: 5px; /* 아래쪽 여백: 5px */
+    border: 1px solid #ccc; /* 테두리: 실선, 연한 회색 */
+    border-radius: 5px; /* 모서리 둥글게: 5px */
 }
 .right-section button {
-    background-color: #FF0000;
-    color: white;
-    cursor: pointer;
+    background-color: #FF0000; /* 배경색: 빨강 */
+    color: white; /* 글자색: 흰색 */
+    cursor: pointer; /* 마우스 커서를 손가락 모양으로 변경 */
 }
 .right-section button:hover {
     background-color: #FF0000;
 }
+
+/* 공개 버튼 스타일 */
 .right-section .publish-buttons {
-    display: flex;
-    justify-content: space-between;
+    display: flex; /* 버튼들을 가로로 배치 */
+    justify-content: space-between; /* 버튼 사이 간격 최대화 */
 }
 .right-section .publish-buttons button {
-    width: 48%;
+    width: 48%; /* 버튼 너비: 각각 48% (총 96% + 간격 4%) */
 }
+
+/* 공개 설정 버튼 스타일 */
 .visibility-buttons {
-    display: flex;
-    justify-content: space-between;
+    display: flex; /* 버튼들을 가로로 배치 */
+    justify-content: space-between; /* 버튼 사이 간격 최대화 */
 }
 .visibility-buttons button {
-    width: 48%;
-    background-color: white;
-    color: #FF0000;
-    padding: 10px;
-    border: 2px solid #FF0000;
-    border-radius: 5px;
-    cursor: pointer;
+    width: 48%; /* 버튼 너비: 각각 48% (총 96% + 간격 4%) */
+    background-color: white; /* 배경색: 흰색 */
+    color: #FF0000; /* 글자색: 빨강 */
+    padding: 10px; /* 안쪽 여백: 10px */
+    border: 2px solid #FF0000; /* 테두리: 실선, 빨강, 두께 2px */
+    border-radius: 5px; /* 모서리 둥글게: 5px */
+    cursor: pointer; /* 마우스 커서를 손가락 모양으로 변경 */
 }
-.visibility-buttons button.active {
-    background-color: #FF0000;
-    color: white;
+.visibility-buttons button.active { /* 활성화된 버튼 스타일 */
+    background-color: #FF0000; /* 배경색: 빨강 */
+    color: white; /* 글자색: 흰색 */
 }
-.visibility-buttons button:hover {
-    background-color: #FF0000;
-    color: white;
+.visibility-buttons button:hover { /* 마우스를 올렸을 때 스타일 */
+    background-color: #FF0000; /* 배경색: 빨강 */
+    color: white; /* 글자색: 흰색 */
 }
+
+/* 링크 스타일 */
 a {
-    text-decoration: none;
-    color: #FF0000;
+    text-decoration: none; /* 밑줄 제거 */
+    color: #FF0000; /* 색상: 빨강 */
 }

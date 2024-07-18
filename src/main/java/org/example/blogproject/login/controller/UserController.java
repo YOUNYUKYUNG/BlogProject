@@ -29,12 +29,14 @@ public class UserController {
     private final SocialLoginInfoService socialLoginInfoService;
     private final PasswordEncoder passwordEncoder;
 
+    // 사용자 등록 폼을 표시하는 메서드
     @GetMapping("/userregform")
     public String userregform(Model model) {
         model.addAttribute("userDto", new UserDto());
         return "users/userregform";
     }
 
+    // 사용자를 등록하는 메서드
     @PostMapping("/userreg")
     public String userreg(@ModelAttribute("userDto") @Valid UserDto userDto, BindingResult result, Model model) {
         if (result.hasErrors()) {
@@ -57,22 +59,26 @@ public class UserController {
         return "redirect:/welcome";
     }
 
+    // 유저 홈 페이지를 보여주는 메서드
     @GetMapping("/home")
     public String home(Model model) {
-        return "home";  // 유저 홈 페이지를 보여주는 템플릿 이름
+        return "home";
     }
 
+    // 환영 페이지를 보여주는 메서드
     @GetMapping("/welcome")
     public String welcome() {
         return "users/welcome";
     }
 
+    // 로그인 폼을 표시하는 메서드
     @GetMapping("/loginform")
     public String loginform(Model model) {
         model.addAttribute("loginRequest", new LoginRequestDto());
         return "users/loginform";
     }
 
+    // 로그인 처리 메서드
     @PostMapping("/login")
     public String login(@ModelAttribute("loginRequest") @Valid LoginRequestDto loginRequest, BindingResult result, Model model) {
         if (result.hasErrors()) {
@@ -98,6 +104,7 @@ public class UserController {
         return "redirect:/welcome";
     }
 
+    // 소셜 유저 등록 폼을 표시하는 메서드
     @GetMapping("/registerSocialUser")
     public String showRegisterSocialUserForm(@RequestParam("provider") String provider,
                                              @RequestParam("socialId") String socialId,
@@ -111,6 +118,7 @@ public class UserController {
         return "users/registerSocialUser";
     }
 
+    // 소셜 유저 정보를 저장하는 메서드
     @PostMapping("/saveSocialUser")
     public String saveSocialUser(@RequestParam("provider") String provider,
                                  @RequestParam("socialId") String socialId,
@@ -139,6 +147,7 @@ public class UserController {
         }
     }
 
+    // 사용자 프로필 페이지를 표시하는 메서드
     @GetMapping("/myprofile")
     public String myprofile(Model model) {
         // 메시지가 있으면 모델에 추가
@@ -146,6 +155,7 @@ public class UserController {
         return "users/myprofile";
     }
 
+    // 사용자 아이디를 업데이트하는 메서드
     @PostMapping("/update-username")
     public String updateUsername(@RequestParam String newUsername, Authentication authentication, Model model) {
         String currentUsername = authentication.getName();

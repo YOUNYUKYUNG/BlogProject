@@ -4,71 +4,73 @@
     <meta charset="UTF-8">
     <title>회원가입</title>
     <style>
-        /* Basic styling */
+        /* 기본 스타일 */
         body {
-            display: flex;
+            display: flex; /* 요소들을 가로/세로 중앙 정렬 */
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            background-color: #f0f0f5; /* Lighter gray background */
-            color: #333; /* Darker gray text */
-            margin: 0; /* Remove page margin */
-            padding: 0; /* Remove page padding */
+            min-height: 100vh; /* 화면 높이 100% */
+            background-color: #f0f0f5; /* 연회색 배경 */
+            color: #333; /* 진회색 글씨 */
+            margin: 0; /* 페이지 여백 제거 */
+            padding: 0; /* 페이지 안쪽 여백 제거 */
         }
 
         h2 {
-            text-align: center;
-            margin-bottom: 15px; /* Slightly less space below header */
+            text-align: center; /* 제목 가운데 정렬 */
+            margin-bottom: 15px; /* 제목 아래 여백 */
         }
 
-        /* Form styling */
+        /* 폼 스타일 */
         form {
-            width: 320px; /* Slightly narrower form */
-            padding: 20px; /* Reduced padding */
-            border: none; /* Remove form border */
-            border-radius: 8px; /* Rounded corners */
-            background-color: white;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Add shadow */
+            width: 320px; /* 폼 너비 */
+            padding: 20px; /* 폼 안쪽 여백 */
+            border: none; /* 폼 테두리 제거 */
+            border-radius: 8px; /* 폼 모서리 둥글게 */
+            background-color: white; /* 폼 배경 흰색 */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 폼 그림자 효과 */
         }
 
         form label {
-            display: block;
-            margin-bottom: 5px; /* Less space below labels */
-            font-weight: bold;
+            display: block; /* 레이블을 블록 요소로 설정하여 줄바꿈 */
+            margin-bottom: 5px; /* 레이블 아래 여백 */
+            font-weight: bold; /* 레이블 글씨 굵게 */
         }
 
         form input[type="text"],
         form input[type="password"],
         form input[type="email"] {
-            width: calc(100% - 20px); /* Adjust width for padding */
-            padding: 10px; /* Smaller padding */
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            margin-bottom: 15px; /* Reduced margin */
-            box-sizing: border-box; /* Include border and padding in width */
-            font-size: 14px; /* Smaller font size */
+            width: calc(100% - 20px); /* 너비 계산 (100% - 안쪽 여백) */
+            padding: 10px; /* 입력 필드 안쪽 여백 */
+            border: 1px solid #ddd; /* 입력 필드 테두리 */
+            border-radius: 5px; /* 입력 필드 모서리 둥글게 */
+            margin-bottom: 15px; /* 입력 필드 아래 여백 */
+            box-sizing: border-box; /* 테두리와 안쪽 여백을 너비에 포함 */
+            font-size: 14px; /* 입력 필드 글씨 크기 */
         }
 
         form button {
-            background-color: #FF0000; /* Red background */
-            color: white;
-            padding: 10px; /* Smaller padding */
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px; /* Smaller font size */
-            width: 100%; /* Full width */
-            transition: background-color 0.3s; /* Smooth color transition */
-            margin-bottom: 10px; /* Consistent spacing */
+            background-color: #FF0000; /* 버튼 배경색 빨강 */
+            color: white; /* 버튼 글씨 흰색 */
+            padding: 10px; /* 버튼 안쪽 여백 */
+            border: none; /* 버튼 테두리 제거 */
+            border-radius: 5px; /* 버튼 모서리 둥글게 */
+            cursor: pointer; /* 마우스를 올렸을 때 포인터 모양 변경 */
+            font-size: 14px; /* 버튼 글씨 크기 */
+            width: 100%; /* 버튼 너비 100% */
+            transition: background-color 0.3s; /* 배경색 변경 시 부드러운 전환 효과 */
+            margin-bottom: 10px; /* 버튼 아래 여백 */
         }
 
         form button:hover {
-            background-color: #cc0000; /* Darker red on hover */
+            background-color: #cc0000; /* 마우스를 올렸을 때 버튼 배경색 변경 */
         }
+
         a {
-            text-decoration: none;
-            color: #FF0000;
+            text-decoration: none; /* 링크 밑줄 제거 */
+            color: #FF0000; /* 링크 색상 빨강 */
         }
+
     </style>
 
     <script>

@@ -17,4 +17,5 @@ public interface PostService {
     PostDto convertToDto(Post post);
     Post convertToEntity(PostDto postDto);
     List<Post> findDraftsByUser(User user);
+    List<Post> findAllPublishedPosts(); // 추가된 메서드
 }

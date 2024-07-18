@@ -66,7 +66,7 @@
 
 </head>
 <body>
-<a th:href="@{/}" style="position: absolute; top: 20px; left: 20px;">yourlog</a> <!-- yourlog 링크 상단 좌측에 위치 -->
+<a th:href="@{/}" style="position: absolute; top: 20px; left: 20px;">yourlog</a>
 <form th:action="@{/saveSocialUser}" method="post">
     <input type="hidden" th:name="provider" th:value="${provider}">
     <input type="hidden" th:name="socialId" th:value="${socialId}">
@@ -84,7 +84,7 @@
         <label for="email">이메일</label>
         <input type="email" id="email" name="email">
     </div>
-    <button type="submit">Register</button>
+    <button type="submit">가입</button>
 </form>
 </body>
 </html>

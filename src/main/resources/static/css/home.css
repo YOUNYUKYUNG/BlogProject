@@ -1,38 +1,38 @@
-/* General reset */
-body, h1, h2, h3, h4, h5, p, div, span, a {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    font-size: 100%;
-    font: inherit;
-    vertical-align: baseline;
+/* 일반적인 초기화 */
+body, h1, h2, h3, h4, h5, p, div, span, a { /* HTML 요소들의 기본 스타일 초기화 */
+    margin: 0;             /* 바깥 여백 제거 */
+    padding: 0;            /* 안쪽 여백 제거 */
+    border: 0;             /* 테두리 제거 */
+    font-size: 100%;       /* 폰트 크기 초기화 */
+    font: inherit;         /* 폰트 상속 */
+    vertical-align: baseline; /* 텍스트 세로 정렬 */
 }
 
 body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: #f5f5f5; /* Light gray background for the body */
+    display: flex;         /* flexbox 레이아웃 사용 */
+    flex-direction: column; /* 세로 방향으로 배치 */
+    align-items: center;   /* 가로 중앙 정렬 */
+    background-color: #f5f5f5; /* 배경색: 연한 회색 */
 }
 
 .container {
-    width: 100%;
-    max-width: 1200px;
-    margin: 20px auto; /* Center the container with some top and bottom margin */
-    padding: 20px;
-    background-color: white; /* White background for the container */
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    border-radius: 10px;
+    width: 100%;             /* 너비: 부모 요소의 100% */
+    max-width: 1200px;      /* 최대 너비: 1200px */
+    margin: 20px auto;       /* 위아래 여백 20px, 좌우는 auto로 가운데 정렬 */
+    padding: 20px;          /* 안쪽 여백: 20px */
+    background-color: white; /* 배경색: 흰색 */
+    box-shadow: 0 0 10px rgba(0,0,0,0.1); /* 그림자 효과 */
+    border-radius: 10px;     /* 모서리 둥글게 */
 }
 
-/* Basic styling for the header */
+/* 헤더 기본 스타일 */
 header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-    background-color: white;
-    border-bottom: 2px solid black;
+    display: flex;                   /* flexbox 레이아웃 사용 */
+    justify-content: space-between;  /* 요소들 사이 간격 최대화 */
+    align-items: center;             /* 세로 중앙 정렬 */
+    padding: 10px 20px;              /* 안쪽 여백: 위아래 10px, 좌우 20px */
+    background-color: white;         /* 배경색: 흰색 */
+    border-bottom: 2px solid black;   /* 아래쪽 테두리: 검은색 */
 }
 
 header .left-menu,
@@ -43,53 +43,53 @@ header .right-menu {
 
 header .left-menu a,
 header .right-menu a {
-    text-decoration: none;
-    color: black;
-    margin-right: 15px;
-    font-size: 14px;
+    text-decoration: none; /* 밑줄 제거 */
+    color: black;          /* 글자색: 검은색 */
+    margin-right: 15px;    /* 오른쪽 여백: 15px */
+    font-size: 14px;       /* 글자 크기 */
 }
 
-header .left-menu a:hover,
+header .left-menu a:hover,  /* 마우스 호버 시 효과 */
 header .right-menu a:hover {
-    color: red;
+    color: red;           /* 글자색: 빨간색 */
 }
 
-/* Logo styling */
+/* 로고 스타일 */
 header .logo {
-    font-size: 40px;
-    font-weight: bold;
-    color: #FF0000;
-    text-shadow: 2px 2px 5px rgba(255, 0, 0, 0.5);
+    font-size: 40px;                     /* 글자 크기 */
+    font-weight: bold;                   /* 굵은 글씨 */
+    color: #FF0000;                      /* 빨간색 */
+    text-shadow: 2px 2px 5px rgba(255, 0, 0, 0.5); /* 텍스트 그림자 효과 */
 }
 
-/* Subscribe and Login buttons */
+/* 구독 및 로그인 버튼 */
 header .button {
-    display: inline-block;
-    padding: 6px 12px;
-    margin-right: 10px;
-    border-radius: 5px; /* Rounded corners */
-    font-size: 14px;
-    text-decoration: none;
-    font-weight: bold;
-    text-align: center;
+    display: inline-block;   /* 인라인 블록으로 설정 */
+    padding: 6px 12px;      /* 안쪽 여백: 위아래 6px, 좌우 12px */
+    margin-right: 10px;      /* 오른쪽 여백: 10px */
+    border-radius: 5px;       /* 모서리 둥글게: 5px */
+    font-size: 14px;         /* 글자 크기 */
+    text-decoration: none;   /* 밑줄 제거 */
+    font-weight: bold;       /* 굵은 글씨 */
+    text-align: center;     /* 가운데 정렬 */
 }
 
-header .button.subscribe {
-    background-color: #FF0000;
-    color: white;
-    border: none;
+header .button.subscribe {      /* 구독 버튼 스타일 */
+    background-color: #FF0000; /* 배경색: 빨강 */
+    color: white;            /* 글자색: 흰색 */
+    border: none;             /* 테두리 제거 */
 }
 
-header .button.login {
-    background-color: white;
-    color: black;
-    border: 1px solid black;
+header .button.login {         /* 로그인 버튼 스타일 */
+    background-color: white;  /* 배경색: 흰색 */
+    color: black;           /* 글자색: 검은색 */
+    border: 1px solid black;  /* 테두리: 1px 검은색 실선 */
 }
 
-header .button.subscribe:hover,
+header .button.subscribe:hover, /* 마우스 호버 시 효과 */
 header .button.login:hover {
-    background-color: #000;
-    color: white;
+    background-color: #000;  /* 배경색: 검은색 */
+    color: white;           /* 글자색: 흰색 */
 }
 
 /* Newsletter and Search icons */

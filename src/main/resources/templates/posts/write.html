@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <title>Velog 스타일 작성 페이지</title>
@@ -34,6 +34,21 @@
         a {
             text-decoration: none;
             color: #FF0000;
+        }
+        /* 알림 스타일 */
+        #notification {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            z-index: 1000;
+        }
+        #notification.show {
+            display: block;
         }
     </style>
     <script>
@@ -92,8 +107,18 @@
                 .then(response => response.json())
                 .then(data => {
                     console.log('Draft saved:', data);
+                    showNotification("포스트가 임시저장되었습니다.");
                 })
                 .catch(error => console.error('Error:', error));
+        }
+
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
         }
 
         let editor;
@@ -128,5 +153,9 @@
         </div>
     </form>
 </div>
+
+<!-- 알림 메시지를 표시할 요소 -->
+<div id="notification"></div>
+
 </body>
 </html>

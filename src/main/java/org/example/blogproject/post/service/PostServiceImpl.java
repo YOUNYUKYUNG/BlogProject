@@ -46,7 +46,12 @@ public class PostServiceImpl implements PostService {
         post.setPreviewImageUrl(updatedPost.getPreviewImageUrl());
         post.setViewsCount(updatedPost.getViewsCount());
         post.setLikesCount(updatedPost.getLikesCount());
-        post.setDraft(updatedPost.isDraft());
+
+        // If the post is published, remove it from drafts
+        if (updatedPost.isPublished()) {
+            post.setDraft(false);
+        }
+
         postRepository.save(post);
     }
 
@@ -61,19 +66,27 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public List<Post> findAllPublishedPosts() {
+        return postRepository.findByIsDraftFalse();
+    }
+
+    @Override
     public PostDto convertToDto(Post post) {
         PostDto postDto = new PostDto();
         postDto.setPostId(post.getPostId());
         postDto.setTitle(post.getTitle());
-        postDto.setContent(post.getContent());
+        postDto.setContent(post.getContent().replaceAll("\\<.*?\\>", "")); // HTML 태그 제거
         postDto.setPublished(post.isPublished());
         postDto.setPrivate(post.isPrivate());
         postDto.setPreviewImageUrl(post.getPreviewImageUrl());
         postDto.setViewsCount(post.getViewsCount());
         postDto.setLikesCount(post.getLikesCount());
+        postDto.setDraft(post.isDraft());
         postDto.setUser(convertToUserDto(post.getUser()));
+        postDto.setCreatedAt(post.getCreatedAt());
         return postDto;
     }
+
 
     @Override
     public Post convertToEntity(PostDto postDto) {
@@ -86,6 +99,7 @@ public class PostServiceImpl implements PostService {
         post.setPreviewImageUrl(postDto.getPreviewImageUrl());
         post.setViewsCount(postDto.getViewsCount());
         post.setLikesCount(postDto.getLikesCount());
+        post.setDraft(postDto.isDraft()); // 수정된 부분
 
         if (postDto.getUser() != null) {
             User user = new User();

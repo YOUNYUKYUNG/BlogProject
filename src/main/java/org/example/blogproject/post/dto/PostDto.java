@@ -28,4 +28,5 @@ public class PostDto {
     private LocalDateTime updatedAt;
     private Set<String> tags = new HashSet<>();
     private UserDto user; // User 필드 추가
+    private boolean isDraft;
 }

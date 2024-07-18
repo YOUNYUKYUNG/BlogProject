@@ -6,12 +6,15 @@ import org.example.blogproject.login.service.UserService;
 import org.example.blogproject.post.domain.Post;
 import org.example.blogproject.post.dto.PostDto;
 import org.example.blogproject.post.service.PostService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -22,7 +25,7 @@ public class PostController {
 
     @GetMapping("/")
     public String home(Model model) {
-        List<Post> posts = postService.findAllPosts();
+        List<Post> posts = postService.findAllPublishedPosts();
         model.addAttribute("posts", posts);
         return "home";
     }
@@ -74,9 +77,10 @@ public class PostController {
 
         Post post = postService.convertToEntity(postDto);
         post.setUser(user);
-        String content = post.getContent() != null ? post.getContent() : "";
-        content = content.replaceAll("pattern", "replacement");
-        post.setContent(content);
+
+        if (postDto.isPublished()) {
+            post.setDraft(false);
+        }
 
         // 제목이 설정되지 않은 경우 예외 처리
         if (post.getTitle() == null || post.getTitle().isEmpty()) {
@@ -117,18 +121,6 @@ public class PostController {
         List<Post> posts = postService.findPostsByUser(user);
         model.addAttribute("posts", posts);
         return "users/posts";
-    }
-
-    @PostMapping("/save-draft")
-    @ResponseBody
-    public String saveDraft(@ModelAttribute PostDto postDto, Authentication authentication) {
-        String username = authentication.getName();
-        User user = userService.findByUsername(username).orElseThrow(() -> new IllegalArgumentException("Invalid user"));
-        Post post = postService.convertToEntity(postDto);
-        post.setUser(user);
-        post.setDraft(true);
-        postService.savePost(post);
-        return "Draft saved successfully";
     }
 
     @GetMapping("/drafts")
