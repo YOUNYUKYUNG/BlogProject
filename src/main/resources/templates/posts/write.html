@@ -1,11 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Velog 스타일 작성 페이지</title>
     <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css">
-    <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -27,14 +25,6 @@
             border: none;
             border-bottom: 2px solid #ddd;
         }
-        .tags-input {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            box-sizing: border-box;
-            border: none;
-            border-bottom: 2px solid #ddd;
-        }
         .ckeditor-container {
             margin-bottom: 20px;
         }
@@ -50,15 +40,18 @@
         function showPreview() {
             const form = document.getElementById('postForm');
             const formData = new FormData(form);
-            const tags = JSON.parse(formData.get('tags')).map(tag => tag.value);
 
             const postData = {
                 title: formData.get('title'),
-                tags: tags,
                 content: editor.getData()
             };
 
-            fetch('/post/preview', {
+            if (!postData.content) {
+                alert("Content cannot be empty");
+                return;
+            }
+
+            fetch('/posts/save', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -68,7 +61,7 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.postId) {
-                        window.location.href = '/post/preview?postId=' + data.postId + '&title=' + encodeURIComponent(postData.title);
+                        window.location.href = '/posts/preview?postId=' + data.postId;
                     } else {
                         console.error('Error: postId is undefined');
                     }
@@ -79,11 +72,9 @@
         function saveDraft() {
             const form = document.getElementById('postForm');
             const formData = new FormData(form);
-            const tags = JSON.parse(formData.get('tags')).map(tag => tag.value);
 
             const postData = {
                 title: formData.get('title'),
-                tags: tags,
                 content: editor.getData()
             };
 
@@ -113,22 +104,16 @@
                 .catch(error => {
                     console.error(error);
                 });
-
-            var input = document.querySelector('input[id=tags]');
-            new Tagify(input, {
-                delimiters: ",|\\n", // 쉼표나 엔터로 태그 구분
-            });
         });
     </script>
 </head>
 <body>
 <div class="editor-container">
-    <form id="postForm" method="post" th:action="@{/posts/save}" th:method="post" th:object="${postDto}">
-        <input type="text" class="title-input" placeholder="제목을 입력하세요" name="title" id="post-title" th:field="*{title}">
-        <input type="text" id="tags" class="tags-input" placeholder="태그를 입력하세요" name="tags" th:field="*{tags}">
+    <form id="postForm" method="post">
+        <input type="text" class="title-input" placeholder="제목을 입력하세요" name="title" id="post-title">
 
         <div class="ckeditor-container">
-            <textarea name="content" th:field="*{content}"></textarea>
+            <textarea name="content"></textarea>
         </div>
 
         <div class="buttons">

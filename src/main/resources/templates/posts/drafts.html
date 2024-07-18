@@ -2,12 +2,55 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>임시저장</title>
+    <title>임시 저장 글 목록</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .draft-container {
+            max-width: 800px;
+            width: 100%;
+        }
+        .draft {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .draft a {
+            text-decoration: none;
+            color: #333;
+        }
+        .draft a:hover {
+            text-decoration: underline;
+        }
+        .actions {
+            margin-top: 10px;
+        }
+        .actions a, .actions form {
+            display: inline-block;
+            margin-right: 10px;
+        }
+    </style>
 </head>
 <body>
-<h1>임시 글 목록</h1>
-<div th:each="draft : ${drafts}">
-    <h2><a th:href="@{/templates/posts/draft/{id}(id=${draft.draftId})}" th:text="${draft.title}">제목</a></h2>
-    <p th:text="${draft.content}">내용</p>
+<div class="draft-container">
+    <h1>임시 저장 글 목록</h1>
+    <div th:each="draft : ${drafts}" class="draft">
+        <h2><a th:href="@{/write(id=${draft.draftId})}" th:text="${draft.title}">제목</a></h2>
+        <p><a th:href="@{/write(id=${draft.draftId})}" th:text="${draft.content}">내용</a></p>
+        <div class="actions">
+            <a th:href="@{/post-drafts/{id}(id=${draft.id})}">수정</a>
+            <form th:action="@{/post-drafts/{id}/delete(id=${draft.id})}" method="post">
+                <button type="submit">삭제</button>
+            </form>
+        </div>
+    </div>
+</div>
 </body>
 </html>

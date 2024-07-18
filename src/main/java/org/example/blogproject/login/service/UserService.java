@@ -65,4 +65,5 @@ public class UserService {
     public Optional<User> findByProviderAndSocialId(String provider, String socialId) {
         return userRepository.findByProviderAndSocialId(provider, socialId);
     }
+
 }

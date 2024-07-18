@@ -3,6 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <title>회원가입</title>
+    <style>
+        /* Basic styling */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f5; /* Lighter gray background */
+            color: #333; /* Darker gray text */
+            margin: 0; /* Remove page margin */
+            padding: 0; /* Remove page padding */
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 15px; /* Slightly less space below header */
+        }
+
+        /* Form styling */
+        form {
+            width: 320px; /* Slightly narrower form */
+            padding: 20px; /* Reduced padding */
+            border: none; /* Remove form border */
+            border-radius: 8px; /* Rounded corners */
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Add shadow */
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 5px; /* Less space below labels */
+            font-weight: bold;
+        }
+
+        form input[type="text"],
+        form input[type="password"],
+        form input[type="email"] {
+            width: calc(100% - 20px); /* Adjust width for padding */
+            padding: 10px; /* Smaller padding */
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 15px; /* Reduced margin */
+            box-sizing: border-box; /* Include border and padding in width */
+            font-size: 14px; /* Smaller font size */
+        }
+
+        form button {
+            background-color: #FF0000; /* Red background */
+            color: white;
+            padding: 10px; /* Smaller padding */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px; /* Smaller font size */
+            width: 100%; /* Full width */
+            transition: background-color 0.3s; /* Smooth color transition */
+            margin-bottom: 10px; /* Consistent spacing */
+        }
+
+        form button:hover {
+            background-color: #cc0000; /* Darker red on hover */
+        }
+    </style>
+
     <script>
         function checkUsername() {
             const username = document.getElementById('username').value;
@@ -70,7 +134,7 @@
 </head>
 <body>
 <div>
-    <h5><a th:href="@{/}">블로그</a></h5>
+    <a th:href="@{/}" style="position: absolute; top: 20px; left: 20px;">yourlog</a> <!-- yourlog 링크 상단 좌측에 위치 -->
     <h2>회원가입</h2>
     <form id="userForm" th:action="@{/userreg}" method="post" th:object="${userDto}">
         <div>

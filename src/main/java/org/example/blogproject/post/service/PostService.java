@@ -1,35 +1,19 @@
 package org.example.blogproject.post.service;
 
-import lombok.RequiredArgsConstructor;
 import org.example.blogproject.post.domain.Post;
-import org.example.blogproject.post.repository.PostRepository;
-import org.springframework.stereotype.Service;
+import org.example.blogproject.post.dto.PostDto;
 
 import java.util.List;
 import java.util.Optional;
 
-@Service
-@RequiredArgsConstructor
-public class PostService {
-    private final PostRepository postRepository;
+public interface PostService {
+    List<Post> findAllPosts();
+    Optional<Post> findPostById(Long id);
+    Post savePost(Post post);
+    void updatePost(Long id, Post post);
+    void deletePost(Long id);
+    Post convertToEntity(PostDto postDto);
+    PostDto convertToDto(Post post);
 
-    public List<Post> findAllPosts() {
-        return postRepository.findAll();
-    }
 
-    public Optional<Post> findPostById(Long id) {
-        return postRepository.findById(id);
-    }
-
-    public Post savePost(Post post) {
-        return postRepository.save(post);
-    }
-
-    public void deletePost(Long id) {
-        postRepository.deleteById(id);
-    }
-
-    public Post getPostById(Long id) {
-        return postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Post not found"));
-    }
 }

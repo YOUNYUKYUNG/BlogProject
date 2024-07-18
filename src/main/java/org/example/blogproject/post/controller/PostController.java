@@ -4,25 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.example.blogproject.login.domain.User;
 import org.example.blogproject.login.service.UserService;
 import org.example.blogproject.post.domain.Post;
-import org.example.blogproject.post.domain.PostDraft;
 import org.example.blogproject.post.dto.PostDto;
 import org.example.blogproject.post.service.PostService;
-import org.example.blogproject.post.service.PostDraftService;
-import org.example.blogproject.post.tag.Tag;
-import org.example.blogproject.post.tag.TagService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -30,8 +19,6 @@ public class PostController {
 
     private final PostService postService;
     private final UserService userService;
-    private final TagService tagService;
-    private final PostDraftService postDraftService;
 
     @GetMapping("/")
     public String home(Model model) {
@@ -43,10 +30,8 @@ public class PostController {
     @GetMapping("/posts/view")
     public String viewPost(Model model, @RequestParam Long id) {
         Post post = postService.findPostById(id).orElseThrow(() -> new IllegalArgumentException("Post not found"));
-        if (post.getTags() == null) {
-            post.setTags(Set.of());
-        }
-        model.addAttribute("post", post);
+        PostDto postDto = postService.convertToDto(post);
+        model.addAttribute("postDto", postDto);
         return "posts/view";
     }
 
@@ -59,79 +44,45 @@ public class PostController {
         return "posts/write";
     }
 
-    @PostMapping("/posts/save")
-    @ResponseBody
-    public ResponseEntity<Map<String, Long>> savePost(@RequestBody PostDto postDto, Authentication authentication) {
+    @GetMapping("/edit/{id}")
+    public String showEditPostForm(@PathVariable Long id, Model model) {
+        Post post = postService.findPostById(id).orElseThrow(() -> new IllegalArgumentException("Post not found"));
+        PostDto postDto = postService.convertToDto(post);
+        model.addAttribute("postDto", postDto);
+        return "posts/edit";
+    }
+
+    @PostMapping("/edit/{id}")
+    public String updatePost(@PathVariable Long id, @ModelAttribute PostDto postDto, Authentication authentication) {
         String username = authentication.getName();
         User user = userService.findByUsername(username).orElseThrow(() -> new IllegalArgumentException("Invalid user"));
 
-        Post post = new Post();
+        Post post = postService.convertToEntity(postDto);
         post.setUser(user);
-        post.setTitle(postDto.getTitle());
-        post.setContent(postDto.getContent());
-        post.setPublished(postDto.isPublished());
-        post.setPrivate(postDto.isPrivate());
+        String content = post.getContent() != null ? post.getContent() : "";
+        content = content.replaceAll("pattern", "replacement");
+        post.setContent(content);
 
-        Set<Tag> tags = postDto.getTags().stream().map(tagName -> {
-            Tag tag = tagService.findOrCreateTag(tagName);
-            return tag;
-        }).collect(Collectors.toSet());
-        post.setTags(tags);
+        // 제목이 설정되지 않은 경우 예외 처리
+        if (post.getTitle() == null || post.getTitle().isEmpty()) {
+            throw new IllegalArgumentException("Post title cannot be null or empty");
+        }
 
-        Post savedPost = postService.savePost(post);
-
-        Map<String, Long> response = new HashMap<>();
-        response.put("postId", savedPost.getPostId());
-        return ResponseEntity.ok(response);
+        postService.updatePost(id, post);
+        return "redirect:/posts/view?id=" + id;
     }
 
-    @PostMapping("/posts/save-draft")
-    @ResponseBody
-    public ResponseEntity<Map<String, Long>> saveDraft(@RequestBody PostDto postDto, Authentication authentication) {
-        String username = authentication.getName();
-        User user = userService.findByUsername(username).orElseThrow(() -> new IllegalArgumentException("Invalid user"));
-
-        PostDraft draft = new PostDraft();
-        draft.setUser(user);
-        draft.setTitle(postDto.getTitle());
-        draft.setContent(postDto.getContent());
-        draft.setPrivate(postDto.isPrivate());
-
-        PostDraft savedDraft = postDraftService.saveDraft(draft);
-
-        Map<String, Long> response = new HashMap<>();
-        response.put("draftId", savedDraft.getDraftId());
-        return ResponseEntity.ok(response);
+    @GetMapping("/delete/{id}")
+    public String deletePost(@PathVariable Long id) {
+        postService.deletePost(id);
+        return "redirect:/";
     }
 
-    @PostMapping("/post/preview")
-    @ResponseBody
-    public ResponseEntity<Map<String, Long>> previewPost(@RequestBody PostDto postDto, @AuthenticationPrincipal UserDetails userDetails) {
-        User user = userService.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-        Post post = new Post();
-        post.setTitle(postDto.getTitle());
-        post.setContent(postDto.getContent());
-        post.setUser(user);
-
-        Post savedPost = postService.savePost(post);
-
-        Map<String, Long> response = new HashMap<>();
-        response.put("postId", savedPost.getPostId());
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/post/preview")
-    public String getPostPreview(@RequestParam("postId") Long postId, Model model) {
-        Post post = postService.findPostById(postId).orElseThrow(() -> new IllegalArgumentException("포스트를 찾을 수 없습니다."));
-        model.addAttribute("post", post);
+    @GetMapping("/posts/preview")
+    public String previewPost(@RequestParam Long postId, Model model) {
+        Post post = postService.findPostById(postId).orElseThrow(() -> new IllegalArgumentException("Post not found"));
+        PostDto postDto = postService.convertToDto(post);
+        model.addAttribute("postDto", postDto);
         return "posts/preview";
-    }
-
-    @GetMapping("/post/{id}")
-    public String viewPost(@PathVariable Long id, Model model) {
-        Post post = postService.getPostById(id);
-        model.addAttribute("post", post);
-        return "posts/view";
     }
 }

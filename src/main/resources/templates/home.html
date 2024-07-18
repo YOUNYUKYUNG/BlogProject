@@ -62,21 +62,27 @@
 
     <div class="line-separator"></div>
 
-    <div class="home-container">
+    <div class="post-container">
+        <!-- 반복문으로 생성되는 포스트 카드 -->
         <div th:each="post : ${posts}" class="post-card">
-            <img th:src="${post.previewImageUrl}" alt="Post Image">
-            <div class="post-card-content">
-                <div class="post-title" th:text="${post.title}"></div>
-                <div class="post-content" th:text="${post.content}"></div>
-            </div>
-            <div class="post-card-footer">
-                <span th:text="${post.createdAt}">등록일</span>
-                <div class="profile">
-                    <img th:src="${post.user.profileImageUrl}" alt="Profile Image">
-                    <span th:text="${post.user.username}">작성자 이름</span>
+            <a th:href="@{/posts/view(id=${post.postId})}" style="text-decoration: none; color: inherit;">
+                <img th:src="${post.previewImageUrl}" alt="Post Image">
+                <div class="post-card-content">
+                    <div class="post-title" th:text="${post.title}"></div>
+                    <div class="post-content" th:text="${post.content}"></div>
                 </div>
-            </div>
+                <div class="post-card-footer">
+                    <span class="date" th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}">등록일</span>
+                    <div class="separator"></div>
+                    <div class="profile">
+                        <img th:src="${post.user.profileImageUrl}" alt="Profile Image">
+                        <span th:text="${post.user.username}">작성자 이름</span>
+                    </div>
+                </div>
+            </a>
         </div>
     </div>
+
+</div>
 </body>
 </html>

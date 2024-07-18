@@ -3,11 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <title>로그인</title>
+    <style>
+        /* Basic styling */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f5; /* 배경색 변경 (더 밝은 회색) */
+            color: #333; /* 텍스트 색상 변경 (더 진한 회색) */
+            margin: 0; /* 페이지 margin 제거 */
+            padding: 0; /* 페이지 padding 제거 */
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        /* Form styling */
+        form {
+            width: 350px; /* 폼 너비 조정 */
+            padding: 30px;
+            border: none; /* 폼 테두리 제거 */
+            border-radius: 8px; /* 둥근 모서리 조정 */
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        form input[type="text"],
+        form input[type="password"] {
+            width: calc(100% - 22px); /* 패딩 및 테두리 고려 */
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            box-sizing: border-box; /* 테두리 및 패딩을 너비에 포함 */
+            font-size: 16px; /* 폰트 크기 증가 */
+        }
+
+        form button[type="submit"] {
+            background-color: #FF0000;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px; /* 폰트 크기 증가 */
+            transition: background-color 0.3s; /* 배경색 변경 시 부드러운 전환 */
+        }
+
+        form button[type="submit"]:hover {
+            background-color: #cc0000; /* hover 시 약간 어두워짐 */
+        }
+
+        /* Signup button styling */
+        .signup-btn {
+            display: inline-block;
+            background-color: #FF0000; /* 빨간색 배경색 */
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px; /* 폰트 크기 증가 */
+            text-decoration: none;
+            transition: background-color 0.3s; /* 배경색 변경 시 부드러운 전환 */
+        }
+
+        .signup-btn:hover {
+            background-color: #cc0000; /* hover 시 약간 어두워짐 */
+        }
+
+        /* GitHub Login Button */
+        .btn-primary {
+            background-color: black; /* 검은색 배경 */
+            color: white; /* 흰 글씨 */
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px; /* 폰트 크기 증가 */
+            width: 100%; /* 버튼 너비 확장 */
+            box-sizing: border-box;
+            transition: background-color 0.3s; /* 배경색 변경 시 부드러운 전환 */
+            text-decoration: none; /* 링크 스타일 제거 */
+            display: inline-block; /* 인라인 블록 요소로 설정 */
+            text-align: center; /* 텍스트 가운데 정렬 */
+            margin-bottom: 20px; /* 아래 여백 추가 */
+        }
+
+        .btn-primary:hover {
+            background-color: #333; /* hover 시 약간 어두워짐 */
+        }
+
+    </style>
 </head>
 <body>
-<a th:href="@{/}">yourlog</a>
-<h1>로그인</h1>
+<a th:href="@{/}" style="position: absolute; top: 20px; left: 20px;">yourlog</a>
 <form th:action="@{/login}" th:object="${loginRequest}" method="post">
+
+    <h1>로그인</h1>
     <div>
         <label for="username">아이디</label>
         <input type="text" id="username" th:field="*{username}">
@@ -18,11 +120,12 @@
     </div>
     <div>
         <button type="submit">로그인</button>
+        <a th:href="@{/userregform}" class="signup-btn">회원가입</a>
     </div>
-
-    <a th:href="@{/userregform}">회원가입</a>
-    <br></br>
-    <a th:href="@{/oauth2/authorization/github}" class="btn btn-primary">Login with GitHub</a>
+    <br>
+    <div>
+        <a th:href="@{/oauth2/authorization/github}" class="btn btn-primary">GitHub으로 로그인</a> <!-- GitHub 로그인 버튼 -->
+    </div>
 </form>
 </body>
 </html>

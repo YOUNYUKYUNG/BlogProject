@@ -1,24 +1,119 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>블로그 글 수정</title>
+    <title>Edit Post</title>
+    <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f5f5f5;
+        }
+        .editor-container {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+        .title-input {
+            width: 100%;
+            padding: 10px;
+            font-size: 28px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            border: none;
+            border-bottom: 2px solid #ddd;
+        }
+        .ckeditor-container {
+            margin-bottom: 20px;
+        }
+        .buttons button {
+            margin-right: 10px;
+        }
+        .error {
+            color: red;
+            margin-bottom: 10px;
+        }
+    </style>
+    <script>
+        let editor;
+
+        function goBack() {
+            window.history.back();
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            ClassicEditor
+                .create(document.querySelector('textarea[name=content]'), {
+                    placeholder: '당신의 이야기를 적어보세요...'
+                })
+                .then(newEditor => {
+                    editor = newEditor;
+                    const content = /*[[${postDto.content}]]*/ '';
+                    editor.setData(content);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        });
+
+        function savePost() {
+            const form = document.getElementById('postForm');
+            const formData = new FormData(form);
+
+            const postData = {
+                title: formData.get('title'),
+                content: editor.getData()
+            };
+
+            if (!postData.title.trim()) {
+                document.getElementById('error-message').innerText = '제목을 입력하세요.';
+                return;
+            }
+
+            fetch(`/posts/update/${formData.get('postId')}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(postData)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = `/posts/preview?postId=${formData.get('postId')}`;
+                    } else {
+                        return response.json().then(data => {
+                            console.error('Error saving post:', data.message);
+                        });
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    </script>
 </head>
 <body>
-<h1>블로그 글 수정</h1>
-<form th:action="@{/templates/posts/draft/update}" th:object="${post}" method="post">
-    <input type="hidden" th:field="*{draftId}"/>
-    <label for="title">제목:</label>
-    <input type="text" id="title" th:field="*{title}" required/><br/>
+<div class="editor-container">
+    <form id="postForm" th:action="@{/edit/{id}(id=${postDto.postId})}" method="post">
+        <input type="hidden" name="postId" th:value="${postDto.postId}">
+        <input type="text" class="title-input" placeholder="제목을 입력하세요" name="title" th:value="${postDto.title}" required>
+        <div id="error-message" class="error"></div>
+        <div class="ckeditor-container">
+            <textarea name="content" th:text="${postDto.content}"></textarea>
+        </div>
 
-    <label for="content">내용:</label>
-    <textarea id="content" th:field="*{content}" required></textarea><br/>
-
-    <label for="thumbnailUrl">썸네일 URL:</label>
-    <input type="text" id="thumbnailUrl" th:field="*{previewImageUrl}"/><br/>
-
-    <button type="submit" formaction="/blog/draft/update">임시저장</button>
-    <button type="submit" formaction="/blog/draft/publish">출간하기</button>
-</form>
+        <div class="buttons">
+            <button type="button" onclick="goBack()">나가기</button>
+            <button type="button" onclick="savePost()">수정하기</button>
+        </div>
+    </form>
+</div>
 </body>
 </html>

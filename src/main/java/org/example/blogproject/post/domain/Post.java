@@ -42,11 +42,8 @@ public class Post {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Column
     private LocalDateTime updatedAt;
 
-    @Column
     private String previewImageUrl;
 
     @Column(nullable = false)

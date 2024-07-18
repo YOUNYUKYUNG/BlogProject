@@ -61,29 +61,25 @@
     </style>
 </head>
 <body>
+<a th:href="@{/}" style="position: absolute; top: 20px; left: 20px;">yourlog</a>
+
 <div class="post-container">
     <!-- 제목 -->
-    <h1 class="post-title" th:text="${post.title}">제목</h1>
+    <h1 class="post-title" th:text="${postDto.title}">제목</h1>
 
     <!-- 사용자 이름, 등록일, 조회수 -->
     <div class="post-meta">
-        <span class="username" th:text="${post.user.username}">username</span>
-        <span th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}">등록일</span>
-        <span class="views-count" th:text="${post.viewsCount}">조회수</span>
+        <span class="username" th:text="${postDto.user.username}">username</span>
+        <span th:text="${#temporals.format(postDto.createdAt, 'yyyy-MM-dd')}">등록일</span>
+        <span class="views-count" th:text="${postDto.viewsCount}">조회수</span>
         <!-- 수정 및 삭제 링크 -->
-        <a class="meta-link" th:href="@{/viewsCount/{id}(id=${post.viewsCount})}">통계</a>
-        <a class="meta-link" th:href="@{/edit/{id}(id=${post.postId})}">수정</a>
-        <a class="meta-link" th:href="@{/delete/{id}(id=${post.postId})}">삭제</a>
+        <a class="meta-link" th:href="@{/edit/{id}(id=${postDto.postId})}">수정</a>
+        <a class="meta-link" th:href="@{/delete/{id}(id=${postDto.postId})}">삭제</a>
     </div>
 
-    <!-- 태그 -->
-    <!--    <div>-->
-    <!--        <span th:text="${post.tag}">태그</span>-->
-    <!--    </div>-->
-
     <!-- 내용 -->
-    <div class="post-content">
-        <div th:text="${post.content}">내용</div>
+    <div class="post-content" th:utext="${postDto.content}">
+        내용
     </div>
 </div>
 </body>
