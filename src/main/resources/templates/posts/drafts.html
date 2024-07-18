@@ -36,9 +36,14 @@
             display: inline-block;
             margin-right: 10px;
         }
+        a {
+            text-decoration: none;
+            color: #FF0000;
+        }
     </style>
 </head>
 <body>
+<a th:href="@{/}" style="position: absolute; top: 20px; left: 20px;">yourlog</a>
 <div class="draft-container">
     <h1>임시 저장 글 목록</h1>
     <div th:each="draft : ${drafts}" class="draft">

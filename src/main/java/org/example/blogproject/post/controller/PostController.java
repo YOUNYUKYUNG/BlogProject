@@ -119,4 +119,24 @@ public class PostController {
         return "users/posts";
     }
 
+    @PostMapping("/save-draft")
+    @ResponseBody
+    public String saveDraft(@ModelAttribute PostDto postDto, Authentication authentication) {
+        String username = authentication.getName();
+        User user = userService.findByUsername(username).orElseThrow(() -> new IllegalArgumentException("Invalid user"));
+        Post post = postService.convertToEntity(postDto);
+        post.setUser(user);
+        post.setDraft(true);
+        postService.savePost(post);
+        return "Draft saved successfully";
+    }
+
+    @GetMapping("/drafts")
+    public String getDrafts(Model model, Authentication authentication) {
+        String username = authentication.getName();
+        User user = userService.findByUsername(username).orElseThrow(() -> new IllegalArgumentException("Invalid user"));
+        List<Post> drafts = postService.findDraftsByUser(user);
+        model.addAttribute("drafts", drafts);
+        return "posts/drafts";
+    }
 }

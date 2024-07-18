@@ -75,8 +75,8 @@
                     <span class="date" th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}">등록일</span>
                     <div class="separator"></div>
                     <div class="profile">
-                        <img th:src="${post.user.profileImageUrl}" alt="Profile Image">
-                        <span th:text="${post.user.username}">작성자 이름</span>
+                        <h4>by &nbsp</h4>
+                        <span th:text="${post.user.username}"> 작성자 이름</span>
                     </div>
                 </div>
             </a>

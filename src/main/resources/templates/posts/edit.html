@@ -42,6 +42,10 @@
             color: red;
             margin-bottom: 10px;
         }
+        a {
+            text-decoration: none;
+            color: #FF0000;
+        }
     </style>
     <script>
         let editor;
@@ -100,6 +104,7 @@
     </script>
 </head>
 <body>
+<a th:href="@{/}" style="position: absolute; top: 20px; left: 20px;">yourlog</a>
 <div class="editor-container">
     <form id="postForm" th:action="@{/edit/{id}(id=${postDto.postId})}" method="post">
         <input type="hidden" name="postId" th:value="${postDto.postId}">

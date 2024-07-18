@@ -46,12 +46,18 @@ public class PostServiceImpl implements PostService {
         post.setPreviewImageUrl(updatedPost.getPreviewImageUrl());
         post.setViewsCount(updatedPost.getViewsCount());
         post.setLikesCount(updatedPost.getLikesCount());
+        post.setDraft(updatedPost.isDraft());
         postRepository.save(post);
     }
 
     @Override
     public void deletePost(Long id) {
         postRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Post> findDraftsByUser(User user) {
+        return postRepository.findByUserAndIsDraft(user, true);
     }
 
     @Override

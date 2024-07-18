@@ -52,6 +52,8 @@ public class Post {
     @Column(nullable = false)
     private long likesCount;
 
+    private boolean isDraft;
+
     @ManyToMany
     @JoinTable(
             name = "post_tags",

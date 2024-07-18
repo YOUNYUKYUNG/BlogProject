@@ -8,6 +8,7 @@ import org.example.blogproject.login.dto.LoginResponseDto;
 import org.example.blogproject.login.dto.UserDto;
 import org.example.blogproject.login.service.SocialLoginInfoService;
 import org.example.blogproject.login.service.UserService;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,7 +16,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
-
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -138,7 +140,22 @@ public class UserController {
     }
 
     @GetMapping("/myprofile")
-    public String myprofile() {
+    public String myprofile(Model model) {
+        // 메시지가 있으면 모델에 추가
+        model.addAttribute("message", model.asMap().get("message"));
         return "users/myprofile";
+    }
+
+    @PostMapping("/update-username")
+    public String updateUsername(@RequestParam String newUsername, Authentication authentication, Model model) {
+        String currentUsername = authentication.getName();
+        User user = userService.findByUsername(currentUsername)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user"));
+
+        user.setUsername(newUsername);
+        userService.save(user); // 사용자 정보를 업데이트합니다.
+
+        String message = URLEncoder.encode("사용자 아이디가 성공적으로 업데이트되었습니다.", StandardCharsets.UTF_8);
+        return "redirect:/myprofile?message=" + message;
     }
 }

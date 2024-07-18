@@ -66,4 +66,9 @@ public class UserService {
         return userRepository.findByProviderAndSocialId(provider, socialId);
     }
 
+    // 추가된 부분: 사용자 정보를 저장하는 메서드
+    @Transactional
+    public User save(User user) {
+        return userRepository.save(user);
+    }
 }

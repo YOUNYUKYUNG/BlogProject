@@ -16,4 +16,5 @@ public interface PostService {
     void updatePost(Long id, Post updatedPost);
     PostDto convertToDto(Post post);
     Post convertToEntity(PostDto postDto);
+    List<Post> findDraftsByUser(User user);
 }
