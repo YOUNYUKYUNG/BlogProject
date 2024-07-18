@@ -1,4 +1,4 @@
-package org.example.blogproject.post.service.impl;
+package org.example.blogproject.post.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.blogproject.login.domain.User;
@@ -6,18 +6,20 @@ import org.example.blogproject.login.dto.UserDto;
 import org.example.blogproject.post.domain.Post;
 import org.example.blogproject.post.dto.PostDto;
 import org.example.blogproject.post.repository.PostRepository;
-import org.example.blogproject.post.service.PostService;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
-
     private final PostRepository postRepository;
+
+    @Override
+    public List<Post> findPostsByUser(User user) {
+        return postRepository.findByUser(user);
+    }
 
     @Override
     public List<Post> findAllPosts() {
@@ -30,7 +32,20 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void updatePost(Long id, Post post) {
+    public Post savePost(Post post) {
+        return postRepository.save(post);
+    }
+
+    @Override
+    public void updatePost(Long id, Post updatedPost) {
+        Post post = postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Post not found"));
+        post.setTitle(updatedPost.getTitle());
+        post.setContent(updatedPost.getContent());
+        post.setPublished(updatedPost.isPublished());
+        post.setPrivate(updatedPost.isPrivate());
+        post.setPreviewImageUrl(updatedPost.getPreviewImageUrl());
+        post.setViewsCount(updatedPost.getViewsCount());
+        post.setLikesCount(updatedPost.getLikesCount());
         postRepository.save(post);
     }
 
@@ -40,9 +55,18 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Post savePost(Post post) {
-        post.setCreatedAt(LocalDateTime.now()); // createdAt 필드 설정
-        return postRepository.save(post);
+    public PostDto convertToDto(Post post) {
+        PostDto postDto = new PostDto();
+        postDto.setPostId(post.getPostId());
+        postDto.setTitle(post.getTitle());
+        postDto.setContent(post.getContent());
+        postDto.setPublished(post.isPublished());
+        postDto.setPrivate(post.isPrivate());
+        postDto.setPreviewImageUrl(post.getPreviewImageUrl());
+        postDto.setViewsCount(post.getViewsCount());
+        postDto.setLikesCount(post.getLikesCount());
+        postDto.setUser(convertToUserDto(post.getUser()));
+        return postDto;
     }
 
     @Override
@@ -57,42 +81,33 @@ public class PostServiceImpl implements PostService {
         post.setViewsCount(postDto.getViewsCount());
         post.setLikesCount(postDto.getLikesCount());
 
-
-        // User 설정
-        UserDto userDto = postDto.getUser();
-        if (userDto != null) {
+        if (postDto.getUser() != null) {
             User user = new User();
-            user.setId(userDto.getId());
-            user.setUsername(userDto.getUsername());
-            user.setName(userDto.getName());
-            user.setEmail(userDto.getEmail());
-            user.setProfileImageUrl(userDto.getProfileImageUrl());
-            user.setProvider(userDto.getProvider());
-            user.setSocialId(userDto.getSocialId());
+            user.setId(postDto.getUser().getId());
+            user.setUsername(postDto.getUser().getUsername());
+            user.setName(postDto.getUser().getName());
+            user.setEmail(postDto.getUser().getEmail());
+            user.setProfileImageUrl(postDto.getUser().getProfileImageUrl());
+            user.setProvider(postDto.getUser().getProvider());
+            user.setSocialId(postDto.getUser().getSocialId());
             post.setUser(user);
         }
 
         return post;
     }
 
-    @Override
-    public PostDto convertToDto(Post post) {
-        PostDto postDto = new PostDto();
-        postDto.setPostId(post.getPostId());
-        postDto.setTitle(post.getTitle());
-        postDto.setContent(post.getContent());
-        postDto.setPublished(post.isPublished());
-        postDto.setPrivate(post.isPrivate());
-        postDto.setPreviewImageUrl(post.getPreviewImageUrl());
-        postDto.setViewsCount(post.getViewsCount());
-        postDto.setLikesCount(post.getLikesCount());
-        postDto.setCreatedAt(post.getCreatedAt());
-
-        // UserDto 추가
-        User user = post.getUser();
-        UserDto userDto = new UserDto(user.getId(), user.getUsername(), user.getName(), user.getEmail(), null, null, user.getProfileImageUrl(), user.getProvider(), user.getSocialId());
-        postDto.setUser(userDto);
-
-        return postDto;
+    private UserDto convertToUserDto(User user) {
+        if (user == null) {
+            return null;
+        }
+        UserDto userDto = new UserDto();
+        userDto.setId(user.getId());
+        userDto.setUsername(user.getUsername());
+        userDto.setName(user.getName());
+        userDto.setEmail(user.getEmail());
+        userDto.setProfileImageUrl(user.getProfileImageUrl());
+        userDto.setProvider(user.getProvider());
+        userDto.setSocialId(user.getSocialId());
+        return userDto;
     }
 }

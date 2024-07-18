@@ -2,15 +2,16 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>mypage</title>
+    <title>myprofile</title>
 </head>
 <body>
+<a th:href="@{/}" style="position: absolute; top: 20px; left: 20px;">yourlog</a>
 <h1>개인정보</h1>
 <div sec:authorize="isAuthenticated()">
     <p>안녕하세요. <span sec:authentication="name"></span>님!! </p>
     <p>당신의 롤은 : <span sec:authentication="principal.authorities"></span> </p>
 
-    <p>상세정보 : </p>
+    <p>상세정보 </p>
     <ul>
         <li>사용자 이름 : <span sec:authentication="principal.username"></span></li>
         <li>계정 만료 여부 : <span sec:authentication="principal.accountNonExpired"></span></li>
@@ -24,6 +25,5 @@
     <p>로그인 되지 않았습니다. </p> <a th:href="@{/login}">로그인 </a>해주세요^^
 </div>
 
-<a th:href="@{/}">홈으로</a>
 </body>
 </html>

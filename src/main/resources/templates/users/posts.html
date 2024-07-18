@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Posts</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .post {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+        }
+        .post-title {
+            font-size: 1.5em;
+            margin: 0;
+        }
+        .post-meta {
+            color: #777;
+            font-size: 0.9em;
+        }
+        .post-content {
+            margin-top: 10px;
+        }
+        .post-actions {
+            margin-top: 10px;
+        }
+        .post-actions a {
+            margin-right: 10px;
+            color: #FF0000;
+            text-decoration: none;
+        }
+        .post-actions a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<a th:href="@{/}" style="position: absolute; top: 20px; left: 20px;">yourlog</a>
+<div class="container">
+    <h1>My Posts</h1>
+    <div th:each="post : ${posts}" class="post">
+        <div class="post-title" th:text="${post.title}"></div>
+        <div class="post-content" th:text="${post.content}"></div>
+        <br>
+        <div class="post-meta">
+            <span th:text="${post.createdAt}">Created At</span> |
+            <span th:text="${post.viewsCount}">Views</span> |
+            <span th:text="${post.likesCount}">Likes</span>
+        </div>
+        <div class="post-actions">
+            <a th:href="@{/posts/view(id=${post.postId})}">보기</a>
+            <a th:href="@{/edit/{id}(id=${post.postId})}">수정</a>
+            <a th:href="@{/delete/{id}(id=${post.postId})}">삭제</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -65,10 +65,14 @@ public class PostRestController {
 
         Post post = postService.findPostById(id).orElseThrow(() -> new IllegalArgumentException("Post not found"));
 
+        // 작성자가 맞는지 확인
+        if (!post.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("You are not authorized to update this post");
+        }
+
         post.setTitle(postDto.getTitle());
         String contents = postDto.getContent().replaceAll("\\<.*?\\>", ""); // HTML 태그 제거
         post.setContent(contents);
-        post.setUser(user);
 
         // 제목이 설정되지 않은 경우 예외 처리
         if (post.getTitle() == null || post.getTitle().isEmpty()) {
@@ -76,6 +80,25 @@ public class PostRestController {
         }
 
         postService.savePost(post);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Map<String, Object>> deletePost(@PathVariable Long id, Authentication authentication) {
+        String username = authentication.getName();
+        User user = userService.findByUsername(username).orElseThrow(() -> new IllegalArgumentException("Invalid user"));
+
+        Post post = postService.findPostById(id).orElseThrow(() -> new IllegalArgumentException("Post not found"));
+
+        // 작성자가 맞는지 확인
+        if (!post.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("You are not authorized to delete this post");
+        }
+
+        postService.deletePost(id);
 
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);

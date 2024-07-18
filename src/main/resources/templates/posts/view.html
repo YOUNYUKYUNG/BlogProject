@@ -73,8 +73,8 @@
         <span th:text="${#temporals.format(postDto.createdAt, 'yyyy-MM-dd')}">등록일</span>
         <span class="views-count" th:text="${postDto.viewsCount}">조회수</span>
         <!-- 수정 및 삭제 링크 -->
-        <a class="meta-link" th:href="@{/edit/{id}(id=${postDto.postId})}">수정</a>
-        <a class="meta-link" th:href="@{/delete/{id}(id=${postDto.postId})}">삭제</a>
+        <a class="meta-link" th:if="${isAuthor}" th:href="@{/edit/{id}(id=${postDto.postId})}">수정</a>
+        <a class="meta-link" th:if="${isAuthor}" th:href="@{/delete/{id}(id=${postDto.postId})}">삭제</a>
     </div>
 
     <!-- 내용 -->

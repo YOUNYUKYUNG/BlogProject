@@ -137,8 +137,8 @@ public class UserController {
         }
     }
 
-    @GetMapping("/myProfile")
-    public String myProfile() {
-        return "myProfile";
+    @GetMapping("/myprofile")
+    public String myprofile() {
+        return "users/myprofile";
     }
 }

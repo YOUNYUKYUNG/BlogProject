@@ -28,10 +28,17 @@ public class PostController {
     }
 
     @GetMapping("/posts/view")
-    public String viewPost(Model model, @RequestParam Long id) {
+    public String viewPost(Model model, @RequestParam Long id, Authentication authentication) {
         Post post = postService.findPostById(id).orElseThrow(() -> new IllegalArgumentException("Post not found"));
         PostDto postDto = postService.convertToDto(post);
+
+        String username = authentication.getName();
+        User user = userService.findByUsername(username).orElseThrow(() -> new IllegalArgumentException("Invalid user"));
+
+        boolean isAuthor = post.getUser().getId().equals(user.getId());
+
         model.addAttribute("postDto", postDto);
+        model.addAttribute("isAuthor", isAuthor);
         return "posts/view";
     }
 
@@ -45,9 +52,17 @@ public class PostController {
     }
 
     @GetMapping("/edit/{id}")
-    public String showEditPostForm(@PathVariable Long id, Model model) {
+    public String showEditPostForm(@PathVariable Long id, Model model, Authentication authentication) {
         Post post = postService.findPostById(id).orElseThrow(() -> new IllegalArgumentException("Post not found"));
         PostDto postDto = postService.convertToDto(post);
+
+        String username = authentication.getName();
+        User user = userService.findByUsername(username).orElseThrow(() -> new IllegalArgumentException("Invalid user"));
+
+        if (!post.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("You are not authorized to edit this post");
+        }
+
         model.addAttribute("postDto", postDto);
         return "posts/edit";
     }
@@ -73,7 +88,16 @@ public class PostController {
     }
 
     @GetMapping("/delete/{id}")
-    public String deletePost(@PathVariable Long id) {
+    public String deletePost(@PathVariable Long id, Authentication authentication) {
+        String username = authentication.getName();
+        User user = userService.findByUsername(username).orElseThrow(() -> new IllegalArgumentException("Invalid user"));
+
+        Post post = postService.findPostById(id).orElseThrow(() -> new IllegalArgumentException("Post not found"));
+
+        if (!post.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("You are not authorized to delete this post");
+        }
+
         postService.deletePost(id);
         return "redirect:/";
     }
@@ -85,4 +109,14 @@ public class PostController {
         model.addAttribute("postDto", postDto);
         return "posts/preview";
     }
+
+    @GetMapping("/posts")
+    public String myPosts(Model model, Authentication authentication) {
+        String username = authentication.getName();
+        User user = userService.findByUsername(username).orElseThrow(() -> new IllegalArgumentException("Invalid user"));
+        List<Post> posts = postService.findPostsByUser(user);
+        model.addAttribute("posts", posts);
+        return "users/posts";
+    }
+
 }
