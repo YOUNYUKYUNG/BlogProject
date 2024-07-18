@@ -3,7 +3,6 @@ package org.example.blogproject.login.security;
 import lombok.RequiredArgsConstructor;
 import org.example.blogproject.login.domain.User;
 import org.example.blogproject.login.repository.UserRepository;
-import org.springframework.security.core.userdetails.User.UserBuilder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,7 +20,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         return org.springframework.security.core.userdetails.User.withUsername(user.getUsername())
                 .password(user.getPassword())
                 .authorities(user.getRoles().stream()
-                        .map(role -> role.getName())
+                        .map(role -> role.getRoleName()) // 수정된 부분
                         .toArray(String[]::new))
                 .accountExpired(false)
                 .accountLocked(false)

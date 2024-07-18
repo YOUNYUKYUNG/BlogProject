@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.example.blogproject.login.domain.User;
 import org.example.blogproject.login.service.UserService;
 import org.example.blogproject.post.domain.Post;
+import org.example.blogproject.post.domain.PostDraft;
 import org.example.blogproject.post.dto.PostDto;
 import org.example.blogproject.post.service.PostService;
+import org.example.blogproject.post.service.PostDraftService;
 import org.example.blogproject.post.tag.Tag;
 import org.example.blogproject.post.tag.TagService;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +31,7 @@ public class PostController {
     private final PostService postService;
     private final UserService userService;
     private final TagService tagService;
+    private final PostDraftService postDraftService;
 
     @GetMapping("/")
     public String home(Model model) {
@@ -40,8 +43,11 @@ public class PostController {
     @GetMapping("/posts/view")
     public String viewPost(Model model, @RequestParam Long id) {
         Post post = postService.findPostById(id).orElseThrow(() -> new IllegalArgumentException("Post not found"));
+        if (post.getTags() == null) {
+            post.setTags(Set.of());
+        }
         model.addAttribute("post", post);
-        return "posts/view";  // 포스트 보기 페이지를 보여주는 템플릿 이름
+        return "posts/view";
     }
 
     @GetMapping("/write")
@@ -63,7 +69,6 @@ public class PostController {
         post.setUser(user);
         post.setTitle(postDto.getTitle());
         post.setContent(postDto.getContent());
-        post.setPreviewImageUrl(postDto.getPreviewImageUrl());
         post.setPublished(postDto.isPublished());
         post.setPrivate(postDto.isPrivate());
 
@@ -80,6 +85,25 @@ public class PostController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/posts/save-draft")
+    @ResponseBody
+    public ResponseEntity<Map<String, Long>> saveDraft(@RequestBody PostDto postDto, Authentication authentication) {
+        String username = authentication.getName();
+        User user = userService.findByUsername(username).orElseThrow(() -> new IllegalArgumentException("Invalid user"));
+
+        PostDraft draft = new PostDraft();
+        draft.setUser(user);
+        draft.setTitle(postDto.getTitle());
+        draft.setContent(postDto.getContent());
+        draft.setPrivate(postDto.isPrivate());
+
+        PostDraft savedDraft = postDraftService.saveDraft(draft);
+
+        Map<String, Long> response = new HashMap<>();
+        response.put("draftId", savedDraft.getDraftId());
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("/post/preview")
     @ResponseBody
     public ResponseEntity<Map<String, Long>> previewPost(@RequestBody PostDto postDto, @AuthenticationPrincipal UserDetails userDetails) {
@@ -88,8 +112,7 @@ public class PostController {
         Post post = new Post();
         post.setTitle(postDto.getTitle());
         post.setContent(postDto.getContent());
-        post.setPreviewImageUrl(postDto.getPreviewImageUrl()); // 썸네일 이미지 URL 설정
-        post.setUser(user);  // 현재 로그인한 사용자 설정
+        post.setUser(user);
 
         Post savedPost = postService.savePost(post);
 
@@ -105,4 +128,10 @@ public class PostController {
         return "posts/preview";
     }
 
+    @GetMapping("/post/{id}")
+    public String viewPost(@PathVariable Long id, Model model) {
+        Post post = postService.getPostById(id);
+        model.addAttribute("post", post);
+        return "posts/view";
+    }
 }

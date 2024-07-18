@@ -18,12 +18,8 @@ public class UserProfile {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(columnDefinition = "TEXT")
-    private String profileImageUrl;
-
     @Column(length = 100)
     private String blogTitle;
 
-//    @Column(columnDefinition = "JSONB")
-//    private String emailNotifications;
+
 }

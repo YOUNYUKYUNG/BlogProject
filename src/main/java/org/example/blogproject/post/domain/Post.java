@@ -1,18 +1,24 @@
 package org.example.blogproject.post.domain;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.blogproject.post.tag.Tag;
 import org.example.blogproject.login.domain.User;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Table(name = "posts")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,11 +31,8 @@ public class Post {
     @Column(nullable = false, length = 100)
     private String title;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String content;
-
     @Column(columnDefinition = "TEXT")
-    private String previewImageUrl;
+    private String content;
 
     @Column(nullable = false)
     private boolean published = false;
@@ -37,23 +40,20 @@ public class Post {
     @Column(nullable = false)
     private boolean isPrivate = false;
 
-    @Column(nullable = false)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column
     private LocalDateTime updatedAt;
 
     @Column
-    private LocalDateTime publishedAt;  // 게시물 출간 시간
+    private String previewImageUrl;
 
     @Column(nullable = false)
-    private long viewsCount = 0;
+    private long viewsCount;
 
     @Column(nullable = false)
-    private long likesCount = 0;
-
-    @Column(nullable = false)
-    private long commentsCount = 0;
+    private long likesCount;
 
     @ManyToMany
     @JoinTable(
@@ -62,12 +62,4 @@ public class Post {
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     private Set<Tag> tags = new HashSet<>();
-
-    @ManyToMany
-    @JoinTable(
-            name = "series_posts",
-            joinColumns = @JoinColumn(name = "post_id"),
-            inverseJoinColumns = @JoinColumn(name = "series_id")
-    )
-    private Set<PostSeries> series = new HashSet<>();
 }

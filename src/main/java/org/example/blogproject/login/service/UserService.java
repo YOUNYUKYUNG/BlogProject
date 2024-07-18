@@ -28,7 +28,7 @@ public class UserService {
         user.setName(userDto.getName());
         user.setEmail(userDto.getEmail());
 
-        Role userRole = roleRepository.findByName("USER");
+        Role userRole = roleRepository.findByRoleName("USER");
         user.setRoles(Collections.singleton(userRole));
 
         return userRepository.save(user);
@@ -65,7 +65,4 @@ public class UserService {
     public Optional<User> findByProviderAndSocialId(String provider, String socialId) {
         return userRepository.findByProviderAndSocialId(provider, socialId);
     }
-
-
-
 }

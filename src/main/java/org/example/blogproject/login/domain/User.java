@@ -1,6 +1,7 @@
 package org.example.blogproject.login.domain;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,13 +15,14 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, unique = true, length = 50)
-    private String username;
+    private String username;//아이디
 
     @Column(nullable = false, length = 100)
     private String password;
@@ -37,6 +39,9 @@ public class User {
     @Column(name="registration_date", nullable = false, updatable = false)
     private LocalDateTime registrationDate = LocalDateTime.now();
 
+    @Column
+    private String profileImageUrl;
+
     @Column(name = "social_id")
     private String socialId;
     private String provider;
@@ -48,4 +53,6 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles;
+
+
 }

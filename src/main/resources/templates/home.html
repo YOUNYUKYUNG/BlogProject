@@ -17,7 +17,19 @@
             <div class="auth-buttons">
                 <div sec:authorize="isAuthenticated()">
                     <a th:href="@{/logout}" class="button subscribe">LOG OUT</a>
-                    <a th:href="@{/}" class="button login">LOG IN</a>
+                    <div class="dropdown">
+                        <button class="dropbtn">
+                            <span class="profile-icon">my</span>
+                            <span class="arrow"></span>
+                        </button>
+                        <div class="dropdown-content">
+                            <a th:href="@{/user/mypage}">내 블로그</a>
+                            <a th:href="@{/posts/drafts}">임시 글</a>
+                            <a th:href="@{/user/readlist}">읽기 목록</a>
+                            <a th:href="@{/user/myprofile}">내 정보 보기</a>
+                            <a th:href="@{/logout}">로그아웃</a>
+                        </div>
+                    </div>
                 </div>
                 <div sec:authorize="isAnonymous()">
                     <a th:href="@{/loginform}" class="button login">LOG IN</a>
@@ -42,7 +54,7 @@
             <a th:href="@{/}">CHAT</a>
         </div>
         <div class="search">
-            <a th:href ="@{/}">
+            <a th:href="@{/}">
                 <img src="/image/search-icon.JPG" alt="Search Icon">
             </a>
         </div>
@@ -51,17 +63,20 @@
     <div class="line-separator"></div>
 
     <div class="home-container">
-        <h1>모든 포스트</h1>
-        <div th:each="post : ${posts}">
-            <h2><a th:href="@{/posts/{postId}(postId=${post.postId})}" th:text="${post.title}">포스트 제목</a></h2>
-            <p th:text="${post.content}">포스트 내용</p>
-            <div class="tags">
-                <span th:each="tag : ${post.tags}" th:text="${tag}">태그</span>
+        <div th:each="post : ${posts}" class="post-card">
+            <img th:src="${post.previewImageUrl}" alt="Post Image">
+            <div class="post-card-content">
+                <div class="post-title" th:text="${post.title}"></div>
+                <div class="post-content" th:text="${post.content}"></div>
+            </div>
+            <div class="post-card-footer">
+                <span th:text="${post.createdAt}">등록일</span>
+                <div class="profile">
+                    <img th:src="${post.user.profileImageUrl}" alt="Profile Image">
+                    <span th:text="${post.user.username}">작성자 이름</span>
+                </div>
             </div>
         </div>
     </div>
-
-
-</div>
 </body>
 </html>

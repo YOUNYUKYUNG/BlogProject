@@ -2,14 +2,12 @@ package org.example.blogproject.login.repository;
 
 import org.example.blogproject.login.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsername(String username);
     boolean existsByUsername(String username);
     boolean existsByEmail(String email);
-    Optional<User> findByProviderAndSocialId(String provider, String socialId);
+    Optional<User> findByProviderAndSocialId(String provider, String socialId); // 추가된 부분
 }

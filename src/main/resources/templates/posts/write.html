@@ -42,21 +42,73 @@
             margin-right: 10px;
         }
     </style>
-</head>
-<body>
-<div class="editor-container">
-    <form id="postForm" method="post">
-        <input type="text" class="title-input" placeholder="제목을 입력하세요" name="title" id="post-title" th:value="${post != null ? post.title : ''}">
-        <input type="text" id="tags" class="tags-input" placeholder="태그를 입력하세요" name="tags" th:value="${post != null ? post.tags : ''}">
+    <script>
+        function goBack() {
+            window.history.back();
+        }
 
-        <div class="ckeditor-container">
-            <textarea id="editor" name="content" th:text="${post != null ? post.content : ''}"></textarea>
-        </div>
+        function showPreview() {
+            const form = document.getElementById('postForm');
+            const formData = new FormData(form);
+            const tags = JSON.parse(formData.get('tags')).map(tag => tag.value);
 
-        <script>
+            const postData = {
+                title: formData.get('title'),
+                tags: tags,
+                content: editor.getData()
+            };
+
+            fetch('/post/preview', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(postData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.postId) {
+                        window.location.href = '/post/preview?postId=' + data.postId + '&title=' + encodeURIComponent(postData.title);
+                    } else {
+                        console.error('Error: postId is undefined');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function saveDraft() {
+            const form = document.getElementById('postForm');
+            const formData = new FormData(form);
+            const tags = JSON.parse(formData.get('tags')).map(tag => tag.value);
+
+            const postData = {
+                title: formData.get('title'),
+                tags: tags,
+                content: editor.getData()
+            };
+
+            fetch('/posts/save-draft', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(postData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Draft saved:', data);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        let editor;
+        document.addEventListener('DOMContentLoaded', function () {
             ClassicEditor
-                .create(document.querySelector('#editor'), {
+                .create(document.querySelector('textarea[name=content]'), {
                     placeholder: '당신의 이야기를 적어보세요...'
+                })
+                .then(newEditor => {
+                    editor = newEditor;
                 })
                 .catch(error => {
                     console.error(error);
@@ -66,47 +118,25 @@
             new Tagify(input, {
                 delimiters: ",|\\n", // 쉼표나 엔터로 태그 구분
             });
-        </script>
+        });
+    </script>
+</head>
+<body>
+<div class="editor-container">
+    <form id="postForm" method="post" th:action="@{/posts/save}" th:method="post" th:object="${postDto}">
+        <input type="text" class="title-input" placeholder="제목을 입력하세요" name="title" id="post-title" th:field="*{title}">
+        <input type="text" id="tags" class="tags-input" placeholder="태그를 입력하세요" name="tags" th:field="*{tags}">
+
+        <div class="ckeditor-container">
+            <textarea name="content" th:field="*{content}"></textarea>
+        </div>
 
         <div class="buttons">
             <button type="button" onclick="goBack()">뒤로가기</button>
+            <button type="button" onclick="saveDraft()">임시 저장</button>
             <button type="button" onclick="showPreview()">출간하기</button>
         </div>
+    </form>
 </div>
-
-<script>
-    function goBack() {
-        window.history.back();
-    }
-
-    function showPreview() {
-        const form = document.getElementById('postForm');
-        const formData = new FormData(form);
-        const tags = JSON.parse(formData.get('tags')).map(tag => tag.value);
-
-        const postData = {
-            title: formData.get('title'),
-            tags: tags,
-            content: formData.get('content')
-        };
-
-        fetch('/post/preview', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(postData)
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.postId) {
-                    window.location.href = '/post/preview?postId=' + data.postId + '&title=' + encodeURIComponent(postData.title);
-                } else {
-                    console.error('Error: postId is undefined');
-                }
-            })
-            .catch(error => console.error('Error:', error));
-    }
-</script>
 </body>
 </html>

@@ -91,8 +91,8 @@ header .button.login:hover {
 /* Newsletter and Search icons */
 .right-menu {
     display: flex;
+    align-items: flex-start;
     flex-direction: column;
-    align-items: center;
     margin-right: 20px;
     margin-top: 10px;
 }
@@ -119,6 +119,69 @@ header .newsletter span {
     font-size: 14px;
     font-weight: bold;
     text-align: center;
+}
+
+/* Dropdown menu styling */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropbtn {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    padding: 0;
+}
+
+.profile-icon {
+    background-color: #6200EA;
+    color: white;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    margin-right: 5px;
+}
+
+.arrow {
+    border: solid black;
+    border-width: 0 1px 1px 0;
+    display: inline-block;
+    padding: 3px;
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    flex-direction: column;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
 }
 
 /* Additional lines separators */
@@ -170,4 +233,69 @@ nav .search {
 nav .search img {
     width: 20px;  /* Adjusted size */
     height: 20px; /* Adjusted size */
+}
+
+/* Post container styling */
+.post-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px; /* Add gap between the items */
+    margin: 20px 0;
+    justify-content: space-between;
+}
+
+/* Post card styling */
+.post-card {
+    flex: 1 0 calc(25% - 20px); /* 4 items per row with a 20px gap */
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    box-sizing: border-box;
+    max-width: calc(25% - 20px); /* Ensure max width is set */
+    height: 300px; /* Fixed height for consistency */
+}
+
+.post-card img {
+    width: 100%;
+    height: 150px; /* Fixed height for the image */
+    object-fit: cover; /* Ensure image covers the area */
+}
+
+.post-card-content {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%; /* Ensure the content takes the remaining space */
+}
+
+.post-card-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.post-card-text {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 10px;
+    flex-grow: 1; /* Ensure this section grows to fill space */
+}
+
+.post-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #777;
+}
+
+.post-card-footer img {
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    margin-right: 5px;
 }

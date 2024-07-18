@@ -15,7 +15,6 @@ public class SocialLoginInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String provider;
     private String socialId; // 기본값 설정
     private LocalDateTime createdAt;

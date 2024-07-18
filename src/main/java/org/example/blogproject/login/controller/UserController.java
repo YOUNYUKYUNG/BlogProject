@@ -55,11 +55,11 @@ public class UserController {
         return "redirect:/welcome";
     }
 
-
     @GetMapping("/home")
     public String home(Model model) {
         return "home";  // 유저 홈 페이지를 보여주는 템플릿 이름
     }
+
     @GetMapping("/welcome")
     public String welcome() {
         return "users/welcome";
@@ -86,7 +86,7 @@ public class UserController {
         }
 
         LoginResponseDto loginResponse = new LoginResponseDto(
-                user.getId(),
+                user.getId(),  // 수정된 부분
                 user.getUsername(),
                 user.getEmail(),
                 user.getName()
@@ -136,7 +136,6 @@ public class UserController {
             return "redirect:/error"; // 해당 정보가 없는 경우 에러 페이지로 리다이렉트
         }
     }
-
 
     @GetMapping("/myProfile")
     public String myProfile() {

@@ -14,8 +14,8 @@ public class UserRestController {
     private final UserService userService;
 
     @GetMapping("/check-username")
-    public Map<String, Boolean> checkUsername(@RequestParam String username) {
-        boolean available = !userService.existsByUsername(username);
+    public Map<String, Boolean> checkUsername(@RequestParam String username) { // 수정된 부분
+        boolean available = !userService.existsByUsername(username); // 수정된 부분
         return Collections.singletonMap("available", available);
     }
 
