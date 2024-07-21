@@ -1,89 +1,195 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Post View</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            line-height: 1.6;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+    <link rel="stylesheet" th:href="@{/css/view.css}">
+    <script>
+        function addComment(postId) {
+            const commentContent = document.getElementById('comment-content').value;
+            if (!commentContent) {
+                alert('댓글을 작성하세요.');
+                return;
+            }
+
+            const commentData = {
+                content: commentContent,
+                post: { postId: postId }
+            };
+
+            fetch('/comments/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(commentData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data) {
+                        console.log('Success:', data);
+                        location.reload(); // 페이지 새로고침
+                    } else {
+                        alert('댓글 추가에 실패했습니다.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('댓글 추가 중 오류가 발생했습니다.');
+                });
         }
 
-        .post-container {
-            background: #fff;
-            padding: 20px;
-            margin: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            max-width: 800px;
-            width: 100%;
+        function editComment(commentId) {
+            const commentContent = document.getElementById(`edit-comment-content-${commentId}`).value;
+            if (!commentContent) {
+                alert('댓글을 작성하세요.');
+                return;
+            }
+
+            const commentData = {
+                content: commentContent
+            };
+
+            fetch(`/comments/edit/${commentId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(commentData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data) {
+                        console.log('Success:', data);
+                        location.reload(); // 페이지 새로고침
+                    } else {
+                        alert('댓글 수정에 실패했습니다.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('댓글 수정 중 오류가 발생했습니다.');
+                });
         }
 
-        .post-title {
-            font-size: 2em;
-            margin-bottom: 10px;
+        function deleteComment(commentId) {
+            fetch(`/comments/delete/${commentId}`, {
+                method: 'DELETE'
+            })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Success: 댓글이 삭제되었습니다.');
+                        location.reload(); // 페이지 새로고침
+                    } else {
+                        alert('댓글 삭제에 실패했습니다.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('댓글 삭제 중 오류가 발생했습니다.');
+                });
         }
 
-        .post-meta {
-            display: flex;
-            align-items: center;
-            font-size: 0.9em;
-            color: #666;
-            margin-bottom: 20px;
+        function showEditForm(commentId) {
+            const commentContentElement = document.getElementById(`comment-content-${commentId}`);
+            const editCommentFormElement = document.getElementById(`edit-comment-form-${commentId}`);
+            if (commentContentElement && editCommentFormElement) {
+                commentContentElement.style.display = 'none';
+                editCommentFormElement.style.display = 'block';
+            } else {
+                console.error(`Element not found: comment-content-${commentId} or edit-comment-form-${commentId}`);
+            }
         }
 
-        .post-meta span,
-        .post-meta a {
-            margin-right: 10px;
+        function hideEditForm(commentId) {
+            const commentContentElement = document.getElementById(`comment-content-${commentId}`);
+            const editCommentFormElement = document.getElementById(`edit-comment-form-${commentId}`);
+            if (commentContentElement && editCommentFormElement) {
+                commentContentElement.style.display = 'block';
+                editCommentFormElement.style.display = 'none';
+            } else {
+                console.error(`Element not found: comment-content-${commentId} or edit-comment-form-${commentId}`);
+            }
         }
-
-        .meta-link {
-            color: #888888 ;
-            text-decoration: none;
-        }
-
-        .meta-link:hover {
-            text-decoration: underline;
-        }
-
-        .post-content {
-            font-size: 1em;
-            color: #333;
-        }
-        a {
-            text-decoration: none;
-            color: #FF0000;
-        }
-
-    </style>
+    </script>
 </head>
 <body>
 <a th:href="@{/}" style="position: absolute; top: 20px; left: 20px;">yourlog</a>
-
 <div class="post-container">
-    <!-- 제목 -->
-    <h1 class="post-title" th:text="${postDto.title}">제목</h1>
+    <div class="right-menu">
+        <a th:href="@{/write}" class="write-button" th:if="${user != null}">새 글 작성</a>
+        <div class="auth-buttons">
+            <div class="dropdown" th:if="${user != null}">
+                <button class="dropbtn">
+                    <img th:src="@{${user.profileImageUrl}}" alt="Profile Image" class="profile-icon" th:if="${user.profileImageUrl != null}">
+                    <img th:src="@{/image/default-profile.png}" alt="Default Profile Image" class="profile-icon" th:if="${user.profileImageUrl == null}">
+                    <span class="arrow"></span>
+                </button>
+                <div class="dropdown-content">
+                    <a th:href="@{/posts}">내 블로그</a>
+                    <a th:href="@{/drafts}">임시 글</a>
+                    <a th:href="@{/readlist}">읽기 목록</a>
+                    <a th:href="@{/myprofile}">내 정보 보기</a>
+                    <a th:href="@{/logout}">로그아웃</a>
+                </div>
+            </div>
+            <div th:if="${user == null}">
+                <a th:href="@{/loginform}" class="button login">LOG IN</a>
+            </div>
+        </div>
+    </div>
 
-    <!-- 사용자 이름, 등록일, 조회수 -->
+    <br><br><br><br>
+
+    <h1 class="post-title" th:text="${postDto.title}">제목</h1>
     <div class="post-meta">
         <span class="username" th:text="${postDto.user.username}">username</span>
         <span th:text="${#temporals.format(postDto.createdAt, 'yyyy-MM-dd')}">등록일</span>
         <span class="views-count" th:text="${postDto.viewsCount}">조회수</span>
-        <!-- 수정 및 삭제 링크 -->
         <a class="meta-link" th:if="${isAuthor}" th:href="@{/edit/{id}(id=${postDto.postId})}">수정</a>
         <a class="meta-link" th:if="${isAuthor}" th:href="@{/delete/{id}(id=${postDto.postId})}">삭제</a>
     </div>
-
-    <!-- 내용 -->
     <div class="post-content" th:utext="${postDto.content}">
         내용
+    </div>
+
+    <div class="line-separator"></div>
+
+    <!-- 댓글 입력 폼 -->
+    <div class="comment-form" th:if="${user != null}">
+        <h3>댓글 작성</h3>
+        <textarea id="comment-content" placeholder="댓글을 작성하세요" rows="4" cols="50"></textarea><br>
+        <button type="button" th:attr="onclick='addComment(' + ${postDto.postId} + ')'">댓글 작성</button>
+    </div>
+
+    <div class="comment-form" th:if="${user == null}">
+        <p>댓글을 작성하려면 <a th:href="@{/loginform}">로그인</a>하세요.</p>
+    </div>
+
+    <!-- 댓글 목록 -->
+    <h3>댓글 목록</h3>
+    <div class="comment-container" th:each="comment : ${comments}">
+        <div class="comment-box">
+            <img th:src="@{${comment.user.profileImageUrl}}" alt="avatar" class="avatar">
+            <div class="comment-content">
+                <div class="comment-header">
+                    <span class="comment-author" th:text="${comment.user.username}">작성자</span>
+                    <span class="comment-time" th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}">방금 전</span>
+                </div>
+                <div id="comment-content-${comment.commentId}" class="comment-text" th:text="${comment.content}">댓글 내용</div>
+                <div id="edit-comment-form-${comment.commentId}" class="edit-comment-form" style="display: none;">
+                    <textarea id="edit-comment-content-${comment.commentId}" rows="4" cols="50" th:text="${comment.content}"></textarea><br>
+                    <button type="button" onclick="editComment(${comment.commentId})">댓글 수정</button>
+                    <button type="button" onclick="hideEditForm(${comment.commentId})">취소</button>
+                </div>
+                <div class="comment-actions" th:if="${user != null && comment.user.username == user.username}">
+                    <span class="reply">답글 달기</span>
+                    <span class="edit" onclick="showEditForm(${comment.commentId})">수정</span>
+                    <span class="delete" onclick="deleteComment(${comment.commentId})">삭제</span>
+                </div>
+            </div>
+        </div>
+        <div class="line-separator"></div>
     </div>
 </div>
 </body>

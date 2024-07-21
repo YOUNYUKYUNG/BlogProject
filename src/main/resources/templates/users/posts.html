@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>My Posts</title>
@@ -141,6 +141,14 @@
             color: white;
         }
 
+        .profile-image {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 5px;
+        }
+
     </style>
 </head>
 <body>
@@ -151,7 +159,7 @@
         <div class="auth-buttons">
             <div class="dropdown">
                 <button class="dropbtn">
-                    <span class="profile-icon">my</span>
+                    <img th:src="${user.profileImageUrl}" alt="Profile Image" class="profile-image" th:if="${user != null}" />
                     <span class="arrow"></span>
                 </button>
                 <div class="dropdown-content">
@@ -177,11 +185,8 @@
         </div>
         <div class="post-actions">
             <a th:href="@{/posts/view(id=${post.postId})}">보기</a>
-            <a th:href="@{/edit/{id}(id=${post.postId})}">수정</a>
-            <a th:href="@{/delete/{id}(id=${post.postId})}">삭제</a>
         </div>
     </div>
 </div>
 </body>
 </html>
-

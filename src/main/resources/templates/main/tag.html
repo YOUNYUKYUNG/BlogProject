@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tag</title>
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+</head>
+<body>
+<div class="container">
+    <header>
+        <div class="left-menu">
+            <a th:href="@{/tip}">GOT A TIP?</a>
+        </div>
+        <div class="logo">yourlog</div>
+        <div class="right-menu">
+            <div class="auth-buttons">
+                <div sec:authorize="isAuthenticated()">
+                    <a th:href="@{/logout}" class="button subscribe">LOG OUT</a>
+                    <div class="dropdown">
+                        <button class="dropbtn">
+                            <span th:if="${user != null}">
+                                <span th:if="${user.profileImageUrl != null}">
+                                    <img th:src="@{${user.profileImageUrl}}" alt="Profile Image" class="profile-icon">
+                                </span>
+                                <span th:if="${user.profileImageUrl == null}">
+                                    <img th:src="@{/image/default-profile.png}" alt="Default Profile Image" class="profile-icon">
+                                </span>
+                            </span>
+                            <span class="arrow"></span>
+                        </button>
+                        <div class="dropdown-content">
+                            <a th:href="@{/posts}">내 블로그</a>
+                            <a th:href="@{/drafts}">임시 글</a>
+                            <a th:href="@{/readlist}">읽기 목록</a>
+                            <a th:href="@{/myprofile}">내 정보 보기</a>
+                            <a th:href="@{/logout}">로그아웃</a>
+                        </div>
+                    </div>
+                </div>
+                <div sec:authorize="isAnonymous()">
+                    <a th:href="@{/loginform}" class="button login">LOG IN</a>
+                </div>
+            </div>
+            <div class="newsletter">
+                <a th:href="@{/write}">
+                    <img src="/image/newpost-icon.JPG" alt="New Post Icon">
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="line-separator"></div>
+
+    <nav>
+        <div class="nav-links">
+            <a th:href="@{/}" >TRENDING</a>
+            <a th:href="@{/recent}">RECENT</a>
+            <a th:href="@{/like}">LIKE</a>
+            <a th:href="@{/tag}" class="active" >TAG</a>
+            <a th:href="@{/series}">SERIES</a>
+            <a th:href="@{/chat}">CHAT</a>
+        </div>
+        <div class="search">
+            <a th:href="@{/static}">
+                <img src="/image/search-icon.JPG" alt="Search Icon">
+            </a>
+        </div>
+    </nav>
+
+    <div class="line-separator"></div>
+
+
+    <!--내용-->
+
+</div>
+</body>
+</html>

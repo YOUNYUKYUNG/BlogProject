@@ -125,7 +125,17 @@
         document.addEventListener('DOMContentLoaded', function () {
             ClassicEditor
                 .create(document.querySelector('textarea[name=content]'), {
-                    placeholder: '당신의 이야기를 적어보세요...'
+                    placeholder: '당신의 이야기를 적어보세요...',
+                    ckfinder: {
+                        uploadUrl: '/image/upload'
+                    },
+                    image: {
+                        toolbar: [
+                            'imageTextAlternative',
+                            'imageStyle:full',
+                            'imageStyle:side'
+                        ]
+                    }
                 })
                 .then(newEditor => {
                     editor = newEditor;

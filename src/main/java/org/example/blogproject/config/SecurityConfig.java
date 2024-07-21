@@ -1,9 +1,9 @@
 package org.example.blogproject.config;
 
 import lombok.RequiredArgsConstructor;
-import org.example.blogproject.login.security.CustomOAuth2AuthenticationSuccessHandler;
-import org.example.blogproject.login.service.SocialLoginInfoService;
-import org.example.blogproject.login.service.SocialUserService;
+import org.example.blogproject.security.CustomOAuth2AuthenticationSuccessHandler;
+import org.example.blogproject.service.SocialLoginInfoService;
+import org.example.blogproject.service.SocialUserService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +11,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -36,9 +35,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/userregform", "/userreg", "/", "/loginform", "/css/**", "/js/**", "/image/**").permitAll()
+                        .requestMatchers("/userregform", "/userreg", "/","/recent","/like","/tag","/series","/chat", "/loginform", "/css/**", "/js/**", "/image/**","/uploads/**").permitAll()
                         .requestMatchers("/oauth2/**", "/login/oauth2/code/github", "/registerSocialUser", "/saveSocialUser").permitAll()
                         .requestMatchers("/api/**").permitAll() // API 경로 접근 허용
+                        .requestMatchers("/posts/view/**").permitAll() // 특정 경로 접근 허용
                         .anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf.disable())
@@ -72,7 +72,6 @@ public class SecurityConfig {
         return oauth2UserRequest -> {
             OAuth2User oauth2User = delegate.loadUser(oauth2UserRequest);
 
-            String token = oauth2UserRequest.getAccessToken().getTokenValue();
             String provider = oauth2UserRequest.getClientRegistration().getRegistrationId();
             String socialId = String.valueOf(oauth2User.getAttributes().get("id"));
             String username = (String) oauth2User.getAttributes().get("login");

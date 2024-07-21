@@ -83,7 +83,7 @@ header .button.subscribe {      /* 구독 버튼 스타일 */
 header .button.login {         /* 로그인 버튼 스타일 */
     background-color: white;  /* 배경색: 흰색 */
     color: black;           /* 글자색: 검은색 */
-    border: 1px solid black;  /* 테두리: 1px 검은색 실선 */
+    border: 2px solid black;  /* 테두리: 1px 검은색 실선 */
 }
 
 header .button.subscribe:hover, /* 마우스 호버 시 효과 */
@@ -182,6 +182,11 @@ header .newsletter span {
 
 .dropdown-content a:hover {
     background-color: #f1f1f1;
+}
+
+.write-button:hover {
+    background-color: #FF0000;
+    color: white;
 }
 
 .dropdown:hover .dropdown-content {
@@ -322,4 +327,11 @@ nav .search img {
     width: 24px;
     height: 24px;
     margin-right: 5px;
+}
+
+/* active 클래스 스타일링 */
+.nav-links .active {
+    font-weight: bold;
+    color: #FF0000; /* 원하는 강조 색상으로 변경 */
+    border-bottom: 2px solid #FF0000; /* 밑줄 스타일 추가 */
 }
