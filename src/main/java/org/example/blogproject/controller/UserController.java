@@ -27,11 +27,11 @@ import java.util.Optional;
 public class UserController {
     private final UserService userService;
     private final SocialLoginInfoService socialLoginInfoService;
-    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder; // 비밀번호 인코더
 
     @GetMapping("/userregform")
     public String userregform(Model model) {
-        model.addAttribute("userDto", new UserDto());
+        model.addAttribute("userDto", new UserDto()); // 새로운 UserDto 객체를 모델에 추가
         return "users/userregform";
     }
 
@@ -53,17 +53,17 @@ public class UserController {
             return "users/userregform";
         }
 
-        userService.registUser(userDto);
+        userService.registUser(userDto); // 사용자 등록
         return "redirect:/welcome";
     }
 
     @GetMapping("/home")
     public String home(Model model, Authentication authentication) {
         if (authentication != null && authentication.isAuthenticated()) {
-            String username = authentication.getName();
-            User user = userService.findByUsername(username).orElse(null);
+            String username = authentication.getName(); // 인증된 사용자 이름 가져오기
+            User user = userService.findByUsername(username).orElse(null); // 사용자 찾기
             if (user != null) {
-                model.addAttribute("user", user);
+                model.addAttribute("user", user); // 모델에 사용자 추가
             }
         }
         return "main/home";
@@ -76,7 +76,7 @@ public class UserController {
 
     @GetMapping("/loginform")
     public String loginform(Model model) {
-        model.addAttribute("loginRequest", new LoginRequestDto());
+        model.addAttribute("loginRequest", new LoginRequestDto()); // 새로운 LoginRequestDto 객체를 모델에 추가
         return "users/loginform";
     }
 
@@ -87,11 +87,11 @@ public class UserController {
         }
 
         User user = userService.findByUsername(loginRequest.getUsername())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid username or password"));
+                .orElseThrow(() -> new IllegalArgumentException("Invalid username or password")); // 사용자 찾기
 
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
             result.rejectValue("password", null, "Invalid username or password");
-            return "users/loginform";
+            return "users/loginform"; // 비밀번호 불일치 시 로그인 폼 페이지로 이동
         }
 
         LoginResponseDto loginResponse = new LoginResponseDto(
@@ -100,22 +100,22 @@ public class UserController {
                 user.getEmail(),
                 user.getName()
         );
-        model.addAttribute("user", loginResponse);
+        model.addAttribute("user", loginResponse); // 모델에 로그인 응답 추가
 
         return "redirect:/welcome";
     }
 
-    @GetMapping("/registerSocialUser")
+    @GetMapping("/registerSocialUser") // 소셜 사용자 등록 폼
     public String showRegisterSocialUserForm(@RequestParam("provider") String provider,
                                              @RequestParam("socialId") String socialId,
                                              @RequestParam("name") String name,
                                              @RequestParam("uuid") String uuid,
                                              Model model) {
-        model.addAttribute("provider", provider);
-        model.addAttribute("socialId", socialId);
-        model.addAttribute("name", name);
-        model.addAttribute("uuid", uuid);
-        return "users/registerSocialUser";
+        model.addAttribute("provider", provider); // 모델에 소셜 로그인 제공자 추가
+        model.addAttribute("socialId", socialId); // 모델에 소셜 ID 추가
+        model.addAttribute("name", name); // 모델에 이름 추가
+        model.addAttribute("uuid", uuid); // 모델에 UUID 추가
+        return "users/registerSocialUser"; // 소셜 사용자 등록 폼 페이지로 이동
     }
 
     @PostMapping("/saveSocialUser")
@@ -124,20 +124,19 @@ public class UserController {
                                  @RequestParam("name") String name,
                                  @RequestParam("username") String username,
                                  @RequestParam("email") String email,
-                                 @RequestParam("uuid") String uuid,
-                                 Model model) {
+                                 @RequestParam("uuid") String uuid) {
         Optional<SocialLoginInfo> socialLoginInfoOptional = socialLoginInfoService.findByProviderAndUuidAndSocialId(provider, uuid, socialId);
 
         if (socialLoginInfoOptional.isPresent()) {
             SocialLoginInfo socialLoginInfo = socialLoginInfoOptional.get();
-            LocalDateTime now = LocalDateTime.now();
-            Duration duration = Duration.between(socialLoginInfo.getCreatedAt(), now);
+            LocalDateTime now = LocalDateTime.now(); // 현재 시간
+            Duration duration = Duration.between(socialLoginInfo.getCreatedAt(), now); // 생성 시간과 현재 시간의 차이
 
             if (duration.toMinutes() > 20) {
                 return "redirect:/error";
             }
 
-            userService.saveUser(username, name, email, socialId, provider);
+            userService.saveUser(username, name, email, socialId, provider); // 사용자 저장
 
             return "redirect:/welcome";
         } else {
@@ -147,23 +146,23 @@ public class UserController {
 
     @GetMapping("/myprofile")
     public String myprofile(Authentication authentication, Model model) {
-        String username = authentication.getName();
+        String username = authentication.getName(); // 인증된 사용자 이름 가져오기
         User user = userService.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + username));
-        model.addAttribute("user", user);
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + username)); // 사용자 찾기
+        model.addAttribute("user", user); // 모델에 사용자 추가
         return "users/myprofile";
     }
 
     @PostMapping("/update-username")
     public String updateUsername(@RequestParam String newUsername, Authentication authentication, Model model) {
-        String currentUsername = authentication.getName();
+        String currentUsername = authentication.getName(); // 인증된 사용자 이름 가져오기
         User user = userService.findByUsername(currentUsername)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid user"));
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user")); // 사용자 찾기
 
-        user.setUsername(newUsername);
-        userService.save(user);
+        user.setUsername(newUsername); // 사용자 아이디 업데이트
+        userService.save(user); // 사용자 저장
 
-        String message = URLEncoder.encode("사용자 아이디가 성공적으로 업데이트되었습니다.", StandardCharsets.UTF_8);
+        String message = URLEncoder.encode("사용자 아이디가 성공적으로 업데이트되었습니다.", StandardCharsets.UTF_8); // 성공 메시지 인코딩
         return "redirect:/myprofile?message=" + message;
     }
 

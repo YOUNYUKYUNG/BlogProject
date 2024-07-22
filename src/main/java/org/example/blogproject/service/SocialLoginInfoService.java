@@ -19,12 +19,11 @@ public class SocialLoginInfoService {
         socialLoginInfo.setProvider(provider);
         socialLoginInfo.setSocialId(socialId);
 
-        return socialLoginInfoRepository.save(socialLoginInfo);
+        return socialLoginInfoRepository.save(socialLoginInfo); // 소셜 로그인 정보 저장
     }
 
     @Transactional(readOnly = true)
     public Optional<SocialLoginInfo> findByProviderAndUuidAndSocialId(String provider, String uuid, String socialId){
-        return socialLoginInfoRepository.findByProviderAndUuidAndSocialId(provider, uuid, socialId);
-
+        return socialLoginInfoRepository.findByProviderAndUuidAndSocialId(provider, uuid, socialId); // 제공자, UUID, 소셜 ID로 소셜 로그인 정보 조회
     }
 }

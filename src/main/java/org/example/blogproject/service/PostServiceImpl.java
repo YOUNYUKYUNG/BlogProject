@@ -19,24 +19,23 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Post> findPostsByUser(User user) {
-        return postRepository.findByUser(user);
+        return postRepository.findByUser(user); // 사용자의 게시물 찾기
     }
 
     @Override
     public List<Post> findAllPosts() {
-        return postRepository.findAll();
+        return postRepository.findAll(); // 모든 게시물 찾기
     }
 
     @Override
     public Optional<Post> findPostById(Long id) {
-        return postRepository.findById(id);
+        return postRepository.findById(id); // ID로 게시물 찾기
     }
 
     @Override
     public Post savePost(Post post) {
-        return postRepository.save(post);
+        return postRepository.save(post); // 게시물 저장
     }
-
     @Override
     public void updatePost(Long id, Post updatedPost) {
         Post post = postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Post not found"));
@@ -49,25 +48,25 @@ public class PostServiceImpl implements PostService {
         post.setLikesCount(updatedPost.getLikesCount());
 
         if (updatedPost.isPublished()) {
-            post.setDraft(false);
+            post.setDraft(false); // 게시된 경우 드래프트 상태 해제
         }
 
-        postRepository.save(post);
+        postRepository.save(post); // 게시물 저장
     }
 
     @Override
     public void deletePost(Long id) {
-        postRepository.deleteById(id);
+        postRepository.deleteById(id); // ID로 게시물 삭제
     }
 
     @Override
     public List<Post> findDraftsByUser(User user) {
-        return postRepository.findByUserAndIsDraft(user, true);
+        return postRepository.findByUserAndIsDraft(user, true); // 사용자의 드래프트 게시물 찾기
     }
 
     @Override
     public List<Post> findAllPublishedPosts() {
-        return postRepository.findByIsDraftFalse();
+        return postRepository.findByIsDraftFalse(); // 모든 게시된 게시물 찾기
     }
 
     @Override
@@ -110,7 +109,7 @@ public class PostServiceImpl implements PostService {
             user.setProfileImageUrl(postDto.getUser().getProfileImageUrl());
             user.setProvider(postDto.getUser().getProvider());
             user.setSocialId(postDto.getUser().getSocialId());
-            post.setUser(user);
+            post.setUser(user); // 게시물 작성자 설정
         }
 
         return post;

@@ -9,8 +9,8 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
+@AllArgsConstructor // 모든 필드를 매개변수로 갖는 생성자 생성
+@NoArgsConstructor // 기본 생성자 생성
 public class CommentDto {
     private Long commentId;
     private String content;

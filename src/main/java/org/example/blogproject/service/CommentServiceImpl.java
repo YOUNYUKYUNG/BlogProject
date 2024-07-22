@@ -27,9 +27,11 @@ public class CommentServiceImpl implements CommentService {
         comment.setUser(user);
         comment.setPost(post);
         comment.setCreatedAt(LocalDateTime.now());
+        comment.setUpdatedAt(LocalDateTime.now());
 
-        Comment savedComment = commentRepository.save(comment);
+        Comment savedComment = commentRepository.save(comment); // 댓글 저장
 
+        // 저장된 댓글을 DTO로 변환하여 반환
         return new CommentDto(
                 savedComment.getCommentId(),
                 savedComment.getContent(),
@@ -43,15 +45,16 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public CommentDto editComment(Long id, CommentDto commentDto, User user) {
         Comment comment = commentRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Comment not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Comment not found")); // 댓글 찾기
         if (!comment.getUser().equals(user)) {
-            throw new IllegalArgumentException("You can only edit your own comments");
+            throw new IllegalArgumentException("You can only edit your own comments"); // 사용자가 댓글 작성자가 아닌 경우 예외 발생
         }
         comment.setContent(commentDto.getContent());
-        comment.setUpdatedAt(LocalDateTime.now());
+        comment.setUpdatedAt(LocalDateTime.now()); // 댓글 수정 시간 설정
 
-        Comment updatedComment = commentRepository.save(comment);
+        Comment updatedComment = commentRepository.save(comment); // 댓글 수정 및 저장
 
+        // 수정된 댓글을 DTO로 변환하여 반환
         return new CommentDto(
                 updatedComment.getCommentId(),
                 updatedComment.getContent(),
@@ -65,16 +68,17 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void deleteComment(Long id, User user) {
         Comment comment = commentRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Comment not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Comment not found")); // 댓글 찾기
         if (!comment.getUser().equals(user)) {
-            throw new IllegalArgumentException("You can only delete your own comments");
+            throw new IllegalArgumentException("You can only delete your own comments"); // 사용자가 댓글 작성자가 아닌 경우 예외 발생
         }
-        commentRepository.delete(comment);
+        commentRepository.delete(comment); // 댓글 삭제
     }
 
     @Override
     public List<CommentDto> getCommentsByPost(Post post) {
-        List<Comment> comments = commentRepository.findByPost(post);
+        List<Comment> comments = commentRepository.findByPost(post); // 게시물에 대한 모든 댓글 조회
+        // 댓글 목록을 DTO 목록으로 변환하여 반환
         return comments.stream().map(comment -> new CommentDto(
                 comment.getCommentId(),
                 comment.getContent(),

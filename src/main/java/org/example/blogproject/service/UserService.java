@@ -24,14 +24,14 @@ public class UserService {
     public User registUser(UserDto userDto) {
         User user = new User();
         user.setUsername(userDto.getUsername());
-        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        user.setPassword(passwordEncoder.encode(userDto.getPassword())); // 비밀번호 인코딩
         user.setName(userDto.getName());
         user.setEmail(userDto.getEmail());
 
-        Role userRole = roleRepository.findByRoleName("USER");
+        Role userRole = roleRepository.findByRoleName("USER"); // 기본 사용자 역할 설정
         user.setRoles(Collections.singleton(userRole));
 
-        return userRepository.save(user);
+        return userRepository.save(user); // 사용자 저장
     }
 
     @Transactional(readOnly = false)
@@ -42,43 +42,43 @@ public class UserService {
         user.setEmail(email);
         user.setSocialId(socialId);
         user.setProvider(provider);
-        user.setPassword(""); // 비밀번호는 소셜 로그인 사용자의 경우 비워둡니다.
-        return userRepository.save(user);
+        user.setPassword(""); // 비밀번호는 소셜 로그인 사용자의 경우 비워둠
+        return userRepository.save(user); // 사용자 저장
     }
 
     @Transactional(readOnly = true)
     public Optional<User> findByUsername(String username) {
-        return userRepository.findByUsername(username);
+        return userRepository.findByUsername(username); // 사용자 이름으로 사용자 찾기
     }
 
     @Transactional(readOnly = true)
     public boolean existsByUsername(String username) {
-        return userRepository.existsByUsername(username);
+        return userRepository.existsByUsername(username); // 사용자 이름 존재 여부 확인
     }
 
     @Transactional(readOnly = true)
     public boolean existsByEmail(String email) {
-        return userRepository.existsByEmail(email);
+        return userRepository.existsByEmail(email); // 이메일 존재 여부 확인
     }
 
     @Transactional(readOnly = true)
     public Optional<User> findByProviderAndSocialId(String provider, String socialId) {
-        return userRepository.findByProviderAndSocialId(provider, socialId);
+        return userRepository.findByProviderAndSocialId(provider, socialId); // 제공자와 소셜 ID로 사용자 찾기
     }
 
     @Transactional
     public User save(User user) {
-        return userRepository.save(user);
+        return userRepository.save(user); // 사용자 저장
     }
 
-    // 추가된 부분: 프로필 이미지 URL을 업데이트하는 메서드
+
     @Transactional
     public void updateUserProfileImage(String username, String profileImageUrl) {
         Optional<User> userOptional = userRepository.findByUsername(username);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            user.setProfileImageUrl(profileImageUrl);
-            userRepository.save(user);
+            user.setProfileImageUrl(profileImageUrl); // 프로필 이미지 URL 업데이트
+            userRepository.save(user); // 사용자 저장
         }
     }
 }
