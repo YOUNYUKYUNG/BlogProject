@@ -26,14 +26,17 @@ public class PostController {
     @GetMapping("/")
     public String home(Model model, Authentication authentication) {
         List<Post> posts = postService.findAllPublishedPosts(); // 모든 게시된 게시물 찾기
-        model.addAttribute("posts", posts); // 모델에 게시물 추가
+        List<Post> topViewedPosts = postService.findTopViewedPosts(); // 조회수가 높은 게시물 찾기
+        model.addAttribute("posts", posts); // 모델에 모든 게시물 추가
+        model.addAttribute("topViewedPosts", topViewedPosts); // 모델에 조회수가 높은 게시물 추가
         addAuthenticatedUserToModel(authentication, model); // 인증된 사용자 정보를 모델에 추가
         return "main/home";
     }
 
     @GetMapping("/posts/view")
     public String viewPost(Model model, @RequestParam Long id, Authentication authentication) {
-        Post post = postService.findPostById(id).orElseThrow(() -> new IllegalArgumentException("Post not found")); // 게시물 찾기
+        Post post = postService.incrementViewsCount(id)
+                .orElseThrow(() -> new IllegalArgumentException("Post not found")); // 게시물 찾기 및 조회수 증가
         PostDto postDto = postService.convertToDto(post); // 게시물 DTO로 변환
 
         if (authentication != null && authentication.isAuthenticated()) {
@@ -166,5 +169,4 @@ public class PostController {
         }
         return "main/recent";
     }
-
 }

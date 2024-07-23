@@ -69,8 +69,8 @@
     <div class="line-separator"></div>
 
     <div class="post-container">
-        <!-- 반복문으로 생성되는 포스트 카드 -->
-        <div th:each="post : ${posts}" class="post-card">
+        <!-- 조회수가 높은 순으로 생성되는 포스트 카드 -->
+        <div th:each="post : ${topViewedPosts}" class="post-card">
             <a th:href="@{/posts/view(id=${post.postId})}" style="text-decoration: none; color: inherit;">
                 <img th:src="${post.previewImageUrl}" alt="Post Image">
                 <div class="post-card-content">

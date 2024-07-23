@@ -7,6 +7,7 @@ import org.example.blogproject.dto.UserDto;
 import org.example.blogproject.dto.PostDto;
 import org.example.blogproject.repository.PostRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +37,7 @@ public class PostServiceImpl implements PostService {
     public Post savePost(Post post) {
         return postRepository.save(post); // 게시물 저장
     }
+
     @Override
     public void updatePost(Long id, Post updatedPost) {
         Post post = postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Post not found"));
@@ -115,11 +117,30 @@ public class PostServiceImpl implements PostService {
         return post;
     }
 
+    @Override
     public List<PostDto> findRecentPosts() {
         List<Post> posts = postRepository.findByPublishedTrueOrderByCreatedAtDesc();
         return posts.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public Optional<Post> incrementViewsCount(Long postId) {
+        Optional<Post> postOptional = postRepository.findById(postId);
+        if (postOptional.isPresent()) {
+            Post post = postOptional.get();
+            post.setViewsCount(post.getViewsCount() + 1);
+            postRepository.save(post);
+            return Optional.of(post);
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public List<Post> findTopViewedPosts() {
+        return postRepository.findByPublishedTrueOrderByViewsCountDesc(); // 조회수가 높은 순으로 게시물 찾기
     }
 
     private UserDto convertToUserDto(User user) {

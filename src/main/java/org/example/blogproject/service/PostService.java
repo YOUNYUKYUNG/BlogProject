@@ -40,4 +40,10 @@ public interface PostService {
 
     // 최근 게시물을 조회하는 메서드
     List<PostDto> findRecentPosts();
+
+    // 조회수를 증가시키는 메서드
+    Optional<Post> incrementViewsCount(Long postId);
+
+    // 조회수가 높은 순으로 게시된 게시물을 조회하는 메서드
+    List<Post> findTopViewedPosts();
 }

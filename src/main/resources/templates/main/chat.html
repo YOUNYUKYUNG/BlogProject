@@ -3,20 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebSocket chat</title>
+    <title>WebSocket Chat</title>
     <link rel="stylesheet" th:href="@{/css/home.css}">
     <style>
         body {
             font-family: Arial, sans-serif;
         }
-
         .chat-container {
             width: 50%;
             margin: 0 auto;
             border: 1px solid #ccc;
             padding: 10px;
         }
-
         .chat-messages {
             border: 1px solid #ccc;
             height: 300px;
@@ -24,33 +22,28 @@
             padding: 10px;
             background-color: #f9f9f9;
         }
-
         .chat-input {
             margin-top: 10px;
             display: flex;
             align-items: center;
         }
-
         .chat-input input {
             width: 80%;
             padding: 10px;
             border: 1px solid #ccc;
-            margin-right: 10px; /* 버튼과의 간격 추가 */
+            margin-right: 10px;
         }
-
         .chat-input button {
-            width: 20%; /* 버튼 너비 조정 */
+            width: 20%;
             padding: 10px;
             background-color: #4CAF50;
             color: white;
             border: none;
             cursor: pointer;
         }
-
         .chat-input button:hover {
             background-color: #45a049;
         }
-
     </style>
 </head>
 <body>
@@ -125,5 +118,38 @@
         <button onclick="sendMessage()">Send</button>
     </div>
 </div>
+
+<script>
+    const ws = new WebSocket("ws://" + window.location.host + "/ws");
+
+    ws.onmessage = (event) => {
+        const chatMessage = document.getElementById("chatMessages");
+        const chatElement = document.createElement("p");
+        chatElement.innerText = event.data;
+        chatMessage.appendChild(chatElement);
+        chatMessage.scrollTop = chatMessage.scrollHeight;
+    }
+
+    const sendMessage = () => {
+        const message = document.getElementById("message").value;
+        if (message.trim() !== "") {
+            ws.send(message);
+            document.getElementById("message").value = '';
+            document.getElementById("message").focus();
+        }
+    };
+
+    // Enter 키 입력 시 메시지 전송
+    document.getElementById("message").addEventListener("keypress", (event) => {
+        if (event.key === "Enter") {
+            sendMessage();
+            event.preventDefault();
+        }
+    });
+
+    window.onload = () => {
+        document.getElementById("message").focus();
+    };
+</script>
 </body>
 </html>

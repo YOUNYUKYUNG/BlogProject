@@ -304,6 +304,8 @@ nav .search img {
     align-items: flex-start;
     font-size: 12px;
     color: #777;
+
+
 }
 
 .post-card-footer .date {
@@ -320,6 +322,7 @@ nav .search img {
 .profile {
     display: flex;
     align-items: center;
+    margin-left: 10px; /* 프로필 사진 앞의 여백 */
 }
 
 .profile img {

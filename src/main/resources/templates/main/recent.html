@@ -71,7 +71,7 @@
     <div class="line-separator"></div>
 
     <div class="post-container">
-        <!-- 반복문으로 생성되는 포스트 카드 -->
+        <!-- 최신문으로 생성되는 포스트 카드 -->
         <div th:each="post : ${posts}" class="post-card">
             <a th:href="@{/posts/view(id=${post.postId})}" style="text-decoration: none; color: inherit;">
                 <img th:src="${post.previewImageUrl}" alt="Post Image">

@@ -19,4 +19,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     // 게시된 게시물을 생성일 기준으로 내림차순으로 가져오는 메서드
     List<Post> findByPublishedTrueOrderByCreatedAtDesc(); // 최근 게시물 recent.html
 
+    // 조회수가 높은 순으로 게시된 게시물 찾기
+    List<Post> findByPublishedTrueOrderByViewsCountDesc();
 }
