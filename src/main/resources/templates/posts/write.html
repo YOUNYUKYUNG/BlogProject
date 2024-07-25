@@ -1,39 +1,79 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Velog 스타일 작성 페이지</title>
-    <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
+    <title>작성 페이지</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 20px;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f2f5;
         }
         .editor-container {
+            width: 100%;
             max-width: 800px;
-            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         .title-input {
             width: 100%;
-            padding: 10px;
-            font-size: 28px;
+            padding: 15px;
+            font-size: 24px;
             margin-bottom: 20px;
             box-sizing: border-box;
-            border: none;
-            border-bottom: 2px solid #ddd;
+            border: 1px solid #ddd;
+            border-radius: 5px;
         }
         .ckeditor-container {
             margin-bottom: 20px;
         }
+        .ckeditor-container textarea {
+            width: 100%;
+            height: 300px;
+            padding: 15px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            resize: none;
+        }
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+        }
         .buttons button {
-            margin-right: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #FF0000;
+            color: white;
+            transition: background-color 0.3s;
+        }
+        .buttons button:hover {
+            background-color: #dc3545;
+        }
+        .buttons button:active {
+            background-color: #cc0000;
         }
         a {
             text-decoration: none;
             color: #FF0000;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 18px;
+            transition: color 0.3s;
+        }
+        a:hover {
+            color: #dc3545;
         }
         /* 알림 스타일 */
         #notification {
@@ -46,6 +86,7 @@
             padding: 15px;
             border-radius: 5px;
             z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         #notification.show {
             display: block;
@@ -62,7 +103,7 @@
 
             const postData = {
                 title: formData.get('title'),
-                content: editor.getData()
+                content: formData.get('content')
             };
 
             if (!postData.content) {
@@ -94,7 +135,7 @@
 
             const postData = {
                 title: formData.get('title'),
-                content: editor.getData()
+                content: formData.get('content')
             };
 
             fetch('/posts/save-draft', {
@@ -120,40 +161,16 @@
                 notification.classList.remove('show');
             }, 3000);
         }
-
-        let editor;
-        document.addEventListener('DOMContentLoaded', function () {
-            ClassicEditor
-                .create(document.querySelector('textarea[name=content]'), {
-                    placeholder: '당신의 이야기를 적어보세요...',
-                    ckfinder: {
-                        uploadUrl: '/image/upload'
-                    },
-                    image: {
-                        toolbar: [
-                            'imageTextAlternative',
-                            'imageStyle:full',
-                            'imageStyle:side'
-                        ]
-                    }
-                })
-                .then(newEditor => {
-                    editor = newEditor;
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-        });
     </script>
 </head>
 <body>
-<a th:href="@{/}" style="position: absolute; top: 20px; left: 20px;">yourlog</a>
+<a th:href="@{/}">yourlog</a>
 <div class="editor-container">
     <form id="postForm" method="post">
         <input type="text" class="title-input" placeholder="제목을 입력하세요" name="title" id="post-title">
 
         <div class="ckeditor-container">
-            <textarea name="content"></textarea>
+            <textarea name="content" placeholder="당신의 이야기를 적어보세요..."></textarea>
         </div>
 
         <div class="buttons">

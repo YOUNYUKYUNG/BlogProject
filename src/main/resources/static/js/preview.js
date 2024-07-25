@@ -33,6 +33,27 @@ function previewThumbnail(event) {
         output.style.display = 'block';
     };
     reader.readAsDataURL(event.target.files[0]);
+
+    // 파일 업로드
+    const formData = new FormData();
+    formData.append('thumbnail', event.target.files[0]);
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const postId = urlParams.get('postId');
+
+    fetch(`/posts/upload-thumbnail/${postId}`, {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.imageUrl) {
+                document.getElementById('thumbnail-preview').src = data.imageUrl;
+            } else {
+                console.error('Error uploading thumbnail:', data.error);
+            }
+        })
+        .catch(error => console.error('Error:', error));
 }
 
 function setVisibility(visibility) {

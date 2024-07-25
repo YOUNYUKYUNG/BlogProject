@@ -3,9 +3,10 @@ package org.example.blogproject.service;
 import lombok.RequiredArgsConstructor;
 import org.example.blogproject.domain.Post;
 import org.example.blogproject.domain.User;
-import org.example.blogproject.dto.UserDto;
 import org.example.blogproject.dto.PostDto;
+import org.example.blogproject.dto.UserDto;
 import org.example.blogproject.repository.PostRepository;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

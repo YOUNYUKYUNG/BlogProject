@@ -213,7 +213,7 @@
             const formData = new FormData();
             formData.append('profileImage', fileInput.files[0]);
 
-            fetch('/api/upload-profile-image', {
+            fetch('/api/image/upload-profile-image', {
                 method: 'POST',
                 body: formData
             })
@@ -225,7 +225,11 @@
                 })
                 .then(data => {
                     console.log('Success:', data);
-                    location.reload(); // 페이지 새로고침
+                    // 프로필 이미지 URL 업데이트
+                    const profileImageElement = document.querySelector('.avatar');
+                    const profileIconElement = document.querySelector('.profile-icon');
+                    profileImageElement.src = data.url;
+                    profileIconElement.src = data.url;
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -233,7 +237,7 @@
         }
 
         function deleteProfileImage() {
-            fetch('/api/delete-profile-image', {
+            fetch('/api/image/delete-profile-image', {
                 method: 'POST'
             })
                 .then(response => {

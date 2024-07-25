@@ -36,11 +36,14 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/userregform", "/userreg", "/","/recent","/like","/tag","/series","/chat", "/loginform", "/css/**", "/js/**", "/image/**","/uploads/**").permitAll() // 특정 경로에 대한 접근을 허용
+                        .requestMatchers("/userregform", "/userreg", "/","/recent","/like","/tag",
+                                "/series","/chat", "/loginform", "/css/**", "/js/**", "/image/**",
+                                "/uploads/**","/tip").permitAll() // 특정 경로에 대한 접근을 허용
                         .requestMatchers("/oauth2/**", "/login/oauth2/code/github", "/registerSocialUser", "/saveSocialUser").permitAll() // OAuth2 경로에 대한 접근을 허용
                         .requestMatchers("/api/**").permitAll() // API 경로 접근 허용
                         .requestMatchers("/posts/view/**").permitAll() // 특정 경로 접근 허용
                         .requestMatchers("/ws","/chat").permitAll()
+                        .requestMatchers("/users/myprofile").authenticated()
                         .anyRequest().authenticated() // 그 외의 모든 요청에 대해 인증을 요구
                 )
                 .userDetailsService(customUserDetailsService)

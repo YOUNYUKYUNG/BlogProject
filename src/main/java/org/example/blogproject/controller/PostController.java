@@ -3,11 +3,11 @@ package org.example.blogproject.controller;
 import lombok.RequiredArgsConstructor;
 import org.example.blogproject.domain.Post;
 import org.example.blogproject.domain.User;
-import org.example.blogproject.dto.PostDto;
 import org.example.blogproject.dto.CommentDto;
+import org.example.blogproject.dto.PostDto;
 import org.example.blogproject.service.CommentService;
-import org.example.blogproject.service.UserService;
 import org.example.blogproject.service.PostService;
+import org.example.blogproject.service.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -35,20 +35,24 @@ public class PostController {
 
     @GetMapping("/posts/view")
     public String viewPost(Model model, @RequestParam Long id, Authentication authentication) {
-        Post post = postService.incrementViewsCount(id)
-                .orElseThrow(() -> new IllegalArgumentException("Post not found")); // 게시물 찾기 및 조회수 증가
-        PostDto postDto = postService.convertToDto(post); // 게시물 DTO로 변환
+        Post post = postService.findPostById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Post not found")); // 게시물 찾기
 
         if (authentication != null && authentication.isAuthenticated()) {
             String username = authentication.getName(); // 인증된 사용자 이름 가져오기
             User user = userService.findByUsername(username).orElseThrow(() -> new IllegalArgumentException("Invalid user")); // 사용자 찾기
 
             boolean isAuthor = post.getUser().getId().equals(user.getId()); // 사용자가 게시물 작성자인지 확인
+            if (!isAuthor) {
+                postService.incrementViewsCount(id); // 조회수 증가
+            }
             model.addAttribute("isAuthor", isAuthor); // 모델에 작성자 여부 추가
         } else {
             model.addAttribute("isAuthor", false); // 인증되지 않은 사용자는 작성자가 아님
+            postService.incrementViewsCount(id); // 조회수 증가
         }
 
+        PostDto postDto = postService.convertToDto(post); // 게시물 DTO로 변환
         List<CommentDto> comments = commentService.getCommentsByPost(post); // 게시물에 대한 댓글 가져오기
 
         model.addAttribute("postDto", postDto); // 모델에 게시물 DTO 추가

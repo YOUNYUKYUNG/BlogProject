@@ -10,7 +10,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile; // 이 부분 추가
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -135,4 +140,48 @@ public class PostRestController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response); // 오류 응답 반환
         }
     }
+
+    @PostMapping("/upload-thumbnail/{postId}")
+    public ResponseEntity<Map<String, String>> uploadThumbnail(@PathVariable Long postId, @RequestParam("thumbnail") MultipartFile file) {
+        try {
+            // 디렉토리가 존재하는지 확인하고 없으면 생성
+            Path thumbnailDirPath = Paths.get("src/main/resources/static/image/thumbnails/");
+            if (!Files.exists(thumbnailDirPath)) {
+                Files.createDirectories(thumbnailDirPath);
+            }
+
+            String imageUrl;
+            if (file.isEmpty()) {
+                // 파일이 업로드되지 않은 경우 기본 이미지 사용
+                imageUrl = "/image/thumbnails/none.jpg";
+            } else {
+                // 파일 저장
+                byte[] bytes = file.getBytes();
+                Path path = thumbnailDirPath.resolve(file.getOriginalFilename());
+                Files.write(path, bytes);
+
+                // 파일 접근 URL 생성
+                imageUrl = "/image/thumbnails/" + file.getOriginalFilename();
+
+                // 로그 추가: 이미지 저장 경로 및 URL 확인
+                System.out.println("Image saved to: " + path.toAbsolutePath());
+                System.out.println("Image URL: " + imageUrl);
+            }
+
+            // Post 엔티티에 썸네일 URL 설정
+            Post post = postService.findPostById(postId).orElseThrow(() -> new IllegalArgumentException("Post not found"));
+            post.setPreviewImageUrl(imageUrl);
+            postService.savePost(post);
+
+            return ResponseEntity.ok(Map.of("imageUrl", imageUrl));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Failed to upload file"));
+        }
+    }
+
+
+
+
+
 }

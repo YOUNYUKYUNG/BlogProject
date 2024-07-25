@@ -74,6 +74,26 @@ public class UserController {
         return "users/welcome";
     }
 
+    @GetMapping("/tip")
+    public String tip() {
+        return "main/tip";
+    }
+
+    @GetMapping("/like")
+    public String like() {
+        return "main/like";
+    }
+
+    @GetMapping("/tag")
+    public String tag() {
+        return "main/tag";
+    }
+
+    @GetMapping("/series")
+    public String series() {
+        return "main/series";
+    }
+
     @GetMapping("/loginform")
     public String loginform(Model model) {
         model.addAttribute("loginRequest", new LoginRequestDto()); // 새로운 LoginRequestDto 객체를 모델에 추가
@@ -162,8 +182,13 @@ public class UserController {
         user.setUsername(newUsername); // 사용자 아이디 업데이트
         userService.save(user); // 사용자 저장
 
-        String message = URLEncoder.encode("사용자 아이디가 성공적으로 업데이트되었습니다.", StandardCharsets.UTF_8); // 성공 메시지 인코딩
-        return "redirect:/myprofile?message=" + message;
+        String message = "사용자 아이디가 성공적으로 업데이트되었습니다.";
+        model.addAttribute("message", message); // 성공 메시지 추가
+
+        // 수정된 사용자 정보를 다시 모델에 추가
+        model.addAttribute("user", user);
+
+        return "users/myprofile"; // myprofile.html로 돌아감
     }
 
 }
