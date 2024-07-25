@@ -1,6 +1,12 @@
 # BlogProject
 ![image](https://github.com/user-attachments/assets/eea2080d-c6d7-4975-8be0-7b5fdc4ec254)
+조회순
 
+![image](https://github.com/user-attachments/assets/c17ac8d3-da82-4337-b373-556247e38cf1)
+최신순
+
+![image](https://github.com/user-attachments/assets/ba4bfd8b-497f-4f18-9ca2-92abc4151cda)
+채팅
 
 ---
 
