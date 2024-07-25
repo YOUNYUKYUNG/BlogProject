@@ -8,6 +8,10 @@
 ![image](https://github.com/user-attachments/assets/ba4bfd8b-497f-4f18-9ca2-92abc4151cda)
 채팅
 
+![image](https://github.com/user-attachments/assets/325a40b3-e6b4-49f6-9380-fee20804e0ea)
+tip
+
+
 ---
 
 1. **회원가입**
